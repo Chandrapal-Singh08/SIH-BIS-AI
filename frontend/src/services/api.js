@@ -1,12 +1,14 @@
 import axios from "axios";
 
 /* ======================================================
-   AI Powered BIS Tender Compliance Engine (SIH 2026)
-   Production API Service (Render Backend)
+   AI Powered BIS Tender Compliance Engine
+   Production API Service
 ====================================================== */
 
+// Render Backend URL
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://sih-bis-ai.onrender.com";
+  import.meta.env.VITE_API_URL ||
+  "https://sih-bis-ai.onrender.com";
 
 /* ======================================================
    Axios Instance
@@ -14,14 +16,14 @@ const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 120000, // 2 minutes
+  timeout: 180000, // 3 Minutes
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
 /* ======================================================
-   Global Response / Error Handler
+   Global API Error Handler
 ====================================================== */
 
 api.interceptors.response.use(
@@ -31,7 +33,7 @@ api.interceptors.response.use(
 
     if (error.response) {
       console.error("Status:", error.response.status);
-      console.error("Data:", error.response.data);
+      console.error("Response:", error.response.data);
     } else if (error.request) {
       console.error("Backend server is unreachable.");
     } else {
@@ -45,18 +47,16 @@ api.interceptors.response.use(
 export default api;
 
 /* ======================================================
-   1. Backend Health Check
-   GET /
+   Health Check
 ====================================================== */
 
 export const checkBackendStatus = async () => {
-  const { data } = await api.get("/");
+  const { data } = await api.get("/health");
   return data;
 };
 
 /* ======================================================
-   2. Upload Tender PDF
-   POST /upload/
+   Upload Tender PDF
 ====================================================== */
 
 export const uploadTender = async (file) => {
@@ -73,8 +73,7 @@ export const uploadTender = async (file) => {
 };
 
 /* ======================================================
-   3. OCR Extraction
-   GET /ocr/?filename=
+   OCR Extraction
 ====================================================== */
 
 export const extractOCR = async (filename) => {
@@ -86,8 +85,7 @@ export const extractOCR = async (filename) => {
 };
 
 /* ======================================================
-   4. Download OCR Text
-   GET /ocr/download/
+   Download OCR Text
 ====================================================== */
 
 export const downloadOCRText = async (filename) => {
@@ -100,8 +98,7 @@ export const downloadOCRText = async (filename) => {
 };
 
 /* ======================================================
-   5. BIS Compliance Validation
-   GET /validate/
+   BIS Validation
 ====================================================== */
 
 export const validateTender = async (filename) => {
@@ -113,8 +110,7 @@ export const validateTender = async (filename) => {
 };
 
 /* ======================================================
-   6. AI Recommendation Engine
-   GET /recommend/
+   AI Recommendation Engine
 ====================================================== */
 
 export const getRecommendations = async (filename) => {
@@ -126,8 +122,7 @@ export const getRecommendations = async (filename) => {
 };
 
 /* ======================================================
-   7. Gemini AI Summary
-   GET /assistant/
+   Gemini AI Tender Summary
 ====================================================== */
 
 export const getAISummary = async (filename) => {
@@ -139,8 +134,7 @@ export const getAISummary = async (filename) => {
 };
 
 /* ======================================================
-   8. Gemini AI Chat Assistant
-   POST /assistant/
+   Gemini AI Chat Assistant
 ====================================================== */
 
 export const askAssistant = async (filename, question) => {
@@ -153,8 +147,7 @@ export const askAssistant = async (filename, question) => {
 };
 
 /* ======================================================
-   9. Download Compliance Report
-   GET /report/
+   Download Compliance Report
 ====================================================== */
 
 export const downloadReport = async (filename) => {
@@ -170,9 +163,9 @@ export const downloadReport = async (filename) => {
    Helper URLs
 ====================================================== */
 
-// Uploaded Tender PDF (for PDF Viewer)
+// Uploaded Tender PDF (PDF Review Page)
 export const getTenderPDF = (filename) =>
-  `${API_BASE_URL}/uploads/${filename}`;
+  `${API_BASE_URL}/uploads/${encodeURIComponent(filename)}`;
 
 // Compliance Report URL
 export const getReportURL = (filename) =>

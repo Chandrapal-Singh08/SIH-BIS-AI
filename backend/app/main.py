@@ -23,34 +23,33 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration
-# Works for Localhost + Vercel + Render Frontend
+# CORS Configuration (Render + Vercel + Localhost)
 # ======================================================
-
-FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 allowed_origins = [
     # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 
+    # Render Frontend
+    "https://sih-bis-ai-frontend.onrender.com",
+
     # Vercel Frontend
     "https://sih-bis-ai.vercel.app",
-
-    # Render Frontend (replace if your frontend is deployed on Render)
-    "https://sih-bis-ai-frontend.onrender.com",
 ]
 
-# Add environment variable dynamically
+# Optional custom frontend URL from Render Environment Variable
+FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=False,       # Better for production APIs
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # ======================================================
@@ -67,7 +66,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.mount("/reports", StaticFiles(directory=str(REPORT_DIR)), name="reports")
 
 # ======================================================
-# Import Routers
+# API Routers
 # ======================================================
 
 from api.standards import router as standards_router
@@ -77,10 +76,6 @@ from api.validator import router as validator_router
 from api.recommend import router as recommend_router
 from api.assistant import router as assistant_router
 from reporting.report_api import router as report_router
-
-# ======================================================
-# Register Routers
-# ======================================================
 
 app.include_router(standards_router, tags=["BIS Standards"])
 app.include_router(upload_router, tags=["Upload"])
@@ -102,6 +97,7 @@ def root():
         "version": "1.0.0",
         "deployment": "Render",
         "message": "Backend API is running successfully 🚀",
+        "frontend": "https://sih-bis-ai-frontend.onrender.com",
         "modules": [
             "Upload PDF",
             "OCR Extraction",
@@ -113,7 +109,7 @@ def root():
     }
 
 # ======================================================
-# Render Health Check Endpoint
+# Render Health Check (GET)
 # ======================================================
 
 @app.get("/health", tags=["Health"])
@@ -122,3 +118,16 @@ def health():
         "status": "healthy",
         "service": "AI Powered BIS Tender Compliance Engine",
     }
+
+# ======================================================
+# Render HEAD Request Fix
+# Prevents Render restarting because HEAD / returned 405
+# ======================================================
+
+@app.head("/", include_in_schema=False)
+def head_root():
+    return {}
+
+@app.head("/health", include_in_schema=False)
+def head_health():
+    return {}
