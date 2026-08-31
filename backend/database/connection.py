@@ -4,50 +4,63 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
-# ------------------------------------------------------
-# Load Environment Variables
-# ------------------------------------------------------
+# ======================================================
+# Load Environment Variables (.env for local development)
+# ======================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# ======================================================
+# Database URL
+# Local  -> backend/.env
+# Render -> Environment Variable (DATABASE_URL)
+# ======================================================
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://chandrapalsingh@localhost:5432/bis_database"
+)
 
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL not found in backend/.env")
+# Render PostgreSQL URLs sometimes start with postgres://
+# SQLAlchemy requires postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
 
 print("Loaded Database URL:", DATABASE_URL)
 
-# ------------------------------------------------------
+# ======================================================
 # SQLAlchemy Engine
-# ------------------------------------------------------
+# ======================================================
 engine = create_engine(
     DATABASE_URL,
     echo=False,
-    future=True
+    future=True,
+    pool_pre_ping=True
 )
 
-# ------------------------------------------------------
+# ======================================================
 # Session Factory
-# ------------------------------------------------------
+# ======================================================
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=engine,
 )
 
-# ------------------------------------------------------
+# ======================================================
 # Base Model
-# ------------------------------------------------------
+# ======================================================
 Base = declarative_base()
 
-# ------------------------------------------------------
-# Dependency for FastAPI
-# ------------------------------------------------------
+# ======================================================
+# FastAPI Dependency
+# ======================================================
 def get_db():
     db = SessionLocal()
-
     try:
         yield db
-
     finally:
         db.close()
