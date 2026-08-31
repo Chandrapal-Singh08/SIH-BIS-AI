@@ -2,18 +2,26 @@ import axios from "axios";
 
 /* ======================================================
    AI Powered BIS Tender Compliance Engine (SIH 2026)
-   Central FastAPI Service Layer
+   Production API Service (Render Backend)
 ====================================================== */
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://sih-bis-ai.onrender.com";
+
+/* ======================================================
+   Axios Instance
+====================================================== */
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 120000, // 120 seconds (Gemini/RAG may take time)
+  timeout: 120000, // 2 minutes
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 /* ======================================================
-   Global API Error Handler
+   Global Response / Error Handler
 ====================================================== */
 
 api.interceptors.response.use(
@@ -23,11 +31,11 @@ api.interceptors.response.use(
 
     if (error.response) {
       console.error("Status:", error.response.status);
-      console.error("Response:", error.response.data);
+      console.error("Data:", error.response.data);
     } else if (error.request) {
-      console.error("Backend server is not reachable.");
+      console.error("Backend server is unreachable.");
     } else {
-      console.error("Error:", error.message);
+      console.error(error.message);
     }
 
     return Promise.reject(error);
@@ -79,7 +87,7 @@ export const extractOCR = async (filename) => {
 
 /* ======================================================
    4. Download OCR Text
-   GET /ocr/download/?filename=
+   GET /ocr/download/
 ====================================================== */
 
 export const downloadOCRText = async (filename) => {
@@ -93,7 +101,7 @@ export const downloadOCRText = async (filename) => {
 
 /* ======================================================
    5. BIS Compliance Validation
-   GET /validate/?filename=
+   GET /validate/
 ====================================================== */
 
 export const validateTender = async (filename) => {
@@ -106,7 +114,7 @@ export const validateTender = async (filename) => {
 
 /* ======================================================
    6. AI Recommendation Engine
-   GET /recommend/?filename=
+   GET /recommend/
 ====================================================== */
 
 export const getRecommendations = async (filename) => {
@@ -118,8 +126,8 @@ export const getRecommendations = async (filename) => {
 };
 
 /* ======================================================
-   7. Gemini AI Procurement Summary
-   GET /assistant/?filename=
+   7. Gemini AI Summary
+   GET /assistant/
 ====================================================== */
 
 export const getAISummary = async (filename) => {
@@ -131,7 +139,7 @@ export const getAISummary = async (filename) => {
 };
 
 /* ======================================================
-   8. Gemini Chat Assistant
+   8. Gemini AI Chat Assistant
    POST /assistant/
 ====================================================== */
 
@@ -145,8 +153,8 @@ export const askAssistant = async (filename, question) => {
 };
 
 /* ======================================================
-   9. Generate & Download Compliance Report
-   GET /report/?filename=
+   9. Download Compliance Report
+   GET /report/
 ====================================================== */
 
 export const downloadReport = async (filename) => {
@@ -159,22 +167,17 @@ export const downloadReport = async (filename) => {
 };
 
 /* ======================================================
-   Helper URLs (Used in React Components)
+   Helper URLs
 ====================================================== */
 
-// Uploaded Tender PDF URL (PDF Viewer)
-export const getTenderPDF = (filename) => {
-  return `${API_BASE_URL}/uploads/${filename}`;
-};
+// Uploaded Tender PDF (for PDF Viewer)
+export const getTenderPDF = (filename) =>
+  `${API_BASE_URL}/uploads/${filename}`;
 
-// Compliance Report Download URL
-export const getReportURL = (filename) => {
-  return `${API_BASE_URL}/report/?filename=${encodeURIComponent(filename)}`;
-};
+// Compliance Report URL
+export const getReportURL = (filename) =>
+  `${API_BASE_URL}/report/?filename=${encodeURIComponent(filename)}`;
 
-// OCR Text Download URL (optional)
-export const getOCRTextURL = (filename) => {
-  return `${API_BASE_URL}/ocr/download/?filename=${encodeURIComponent(
-    filename
-  )}`;
-};
+// OCR Text URL
+export const getOCRTextURL = (filename) =>
+  `${API_BASE_URL}/ocr/download/?filename=${encodeURIComponent(filename)}`;
