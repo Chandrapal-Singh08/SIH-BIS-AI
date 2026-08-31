@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -11,6 +12,12 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
+
+UPLOAD_DIR = BASE_DIR / "uploads"
+REPORT_DIR = BASE_DIR / "reports"
+
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ======================================================
 # FastAPI Application
@@ -23,22 +30,16 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration (Render + Vercel + Localhost)
+# CORS Configuration
 # ======================================================
 
 allowed_origins = [
-    # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-
-    # Render Frontend
-    "https://sih-bis-ai-frontend.onrender.com",
-
-    # Vercel Frontend
     "https://sih-bis-ai.vercel.app",
+    "https://sih-bis-ai-frontend.onrender.com",
 ]
 
-# Optional custom frontend URL from Render Environment Variable
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
@@ -46,27 +47,21 @@ if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=False,       # Better for production APIs
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
 
 # ======================================================
-# Static Directories
+# Static Files
 # ======================================================
 
-UPLOAD_DIR = BASE_DIR / "uploads"
-REPORT_DIR = BASE_DIR / "reports"
-
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-REPORT_DIR.mkdir(parents=True, exist_ok=True)
-
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
-app.mount("/reports", StaticFiles(directory=str(REPORT_DIR)), name="reports")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+app.mount("/reports", StaticFiles(directory=REPORT_DIR), name="reports")
 
 # ======================================================
-# API Routers
+# Routers
 # ======================================================
 
 from api.standards import router as standards_router
@@ -77,16 +72,16 @@ from api.recommend import router as recommend_router
 from api.assistant import router as assistant_router
 from reporting.report_api import router as report_router
 
-app.include_router(standards_router, tags=["BIS Standards"])
-app.include_router(upload_router, tags=["Upload"])
-app.include_router(ocr_router, tags=["OCR"])
-app.include_router(validator_router, tags=["Validation"])
-app.include_router(recommend_router, tags=["AI Recommendation"])
-app.include_router(assistant_router, tags=["AI Assistant"])
-app.include_router(report_router, tags=["Compliance Report"])
+app.include_router(standards_router)
+app.include_router(upload_router)
+app.include_router(ocr_router)
+app.include_router(validator_router)
+app.include_router(recommend_router)
+app.include_router(assistant_router)
+app.include_router(report_router)
 
 # ======================================================
-# Root Endpoint
+# Health Endpoints
 # ======================================================
 
 @app.get("/", tags=["Health"])
@@ -96,38 +91,39 @@ def root():
         "project": "AI Powered BIS Tender Compliance Engine",
         "version": "1.0.0",
         "deployment": "Render",
-        "message": "Backend API is running successfully 🚀",
-        "frontend": "https://sih-bis-ai-frontend.onrender.com",
-        "modules": [
-            "Upload PDF",
-            "OCR Extraction",
-            "BIS Validator",
-            "AI Recommendation Engine",
-            "Compliance Report Generator",
-            "Gemini AI Assistant",
-        ],
+        "frontend": "https://sih-bis-ai-frontend.onrender.com"
     }
 
-# ======================================================
-# Render Health Check (GET)
-# ======================================================
 
 @app.get("/health", tags=["Health"])
 def health():
     return {
-        "status": "healthy",
-        "service": "AI Powered BIS Tender Compliance Engine",
+        "status": "healthy"
     }
 
-# ======================================================
-# Render HEAD Request Fix
-# Prevents Render restarting because HEAD / returned 405
-# ======================================================
 
 @app.head("/", include_in_schema=False)
 def head_root():
     return {}
 
+
 @app.head("/health", include_in_schema=False)
 def head_health():
     return {}
+
+# ======================================================
+# PDF Serving (PDF Review Page)
+# ======================================================
+
+@app.get("/pdf/{filename}")
+def serve_pdf(filename: str):
+    file_path = UPLOAD_DIR / filename
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="PDF not found")
+
+    return FileResponse(
+        file_path,
+        media_type="application/pdf",
+        filename=filename,
+    )
