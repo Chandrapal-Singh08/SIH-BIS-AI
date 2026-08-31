@@ -1,0 +1,82 @@
+[
+  {
+    "standard_number": "IS 10322 (Part 5 / Section 3)",
+    "title": "Luminaires for Road and Street Lighting",
+    "scope": "Specifies safety and performance requirements for LED road and street lighting luminaires.",
+    "product_category": "LED Street Lights",
+    "keywords": "LED, street light, luminaire, IP66, outdoor lighting",
+    "revision_year": "2024"
+  },
+  {
+    "standard_number": "IS 16107",
+    "title": "LED Luminaires - Performance Requirements",
+    "scope": "Performance requirements for LED luminaires used for indoor and outdoor applications.",
+    "product_category": "LED Street Lights",
+    "keywords": "LED, efficacy, lumen, luminaire",
+    "revision_year": "2023"
+  },
+  {
+    "standard_number": "IS 15885",
+    "title": "Electronic Control Gear for LED Modules",
+    "scope": "Requirements for electronic drivers and power supplies used with LED modules.",
+    "product_category": "LED Street Lights",
+    "keywords": "LED driver, power supply, overload protection",
+    "revision_year": "2022"
+  },
+  {
+    "standard_number": "IS 16046",
+    "title": "LED Modules for General Lighting",
+    "scope": "Safety specifications for LED lighting modules.",
+    "product_category": "LED Lighting",
+    "keywords": "LED module, lighting, safety",
+    "revision_year": "2022"
+  },
+  {
+    "standard_number": "IS 302-1",
+    "title": "Safety of Household Electrical Appliances",
+    "scope": "General safety requirements for electrical appliances.",
+    "product_category": "Electrical Equipment",
+    "keywords": "electrical safety, appliance",
+    "revision_year": "2023"
+  },
+  {
+    "standard_number": "IS 14286",
+    "title": "Solar Photovoltaic Modules",
+    "scope": "Performance and safety requirements for solar PV modules.",
+    "product_category": "Solar PV Module",
+    "keywords": "solar, photovoltaic, PV panel",
+    "revision_year": "2024"
+  },
+  {
+    "standard_number": "IS 4151",
+    "title": "Protective Helmets for Industrial Use",
+    "scope": "Safety requirements for industrial protective helmets.",
+    "product_category": "Helmet",
+    "keywords": "helmet, protective helmet, industrial safety",
+    "revision_year": "2023"
+  },
+  {
+    "standard_number": "IS 15683",
+    "title": "Portable Fire Extinguishers",
+    "scope": "Performance requirements for portable fire extinguishers.",
+    "product_category": "Fire Extinguisher",
+    "keywords": "fire extinguisher, ABC extinguisher",
+    "revision_year": "2022"
+  },
+  {
+    "standard_number": "IS 374",
+    "title": "Ceiling Fans",
+    "scope": "Performance, safety and energy efficiency requirements for ceiling fans.",
+    "product_category": "Ceiling Fan",
+    "keywords": "ceiling fan, blade sweep, motor",
+    "revision_year": "2024"
+  },
+  {
+    "standard_number": "IS 1786",
+    "title": "High Strength Deformed Steel Bars",
+    "scope": "Requirements for TMT reinforcement bars used in construction.",
+    "product_category": "Construction Materials",
+    "keywords": "TMT, reinforcement, steel bars",
+    "revision_year": "2023"
+  }
+]

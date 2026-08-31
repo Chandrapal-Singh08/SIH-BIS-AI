@@ -1,0 +1,44 @@
+[
+  {
+    "label": "IP Rating",
+    "expected": "IP66",
+    "bis_standard": "IS 10322 (Part 1)",
+    "description": "Ingress Protection rating of the LED luminaire shall be IP66 or higher to provide protection against dust and powerful water jets."
+  },
+  {
+    "label": "Warranty",
+    "expected": "2 Years",
+    "bis_standard": "IS 10322",
+    "description": "The LED street luminaire shall have a minimum warranty period of two years or more for free replacement."
+  },
+  {
+    "label": "Lumen Efficacy",
+    "expected": ">=100 lm/W",
+    "bis_standard": "IS 16107",
+    "description": "The luminaire system efficacy shall be greater than or equal to 100 lumen per watt."
+  },
+  {
+    "label": "Voltage Range",
+    "expected": "140-270 VAC",
+    "bis_standard": "IS 10322",
+    "description": "The LED luminaire shall operate within an input voltage range of 140 to 270 VAC at 50 Hz."
+  },
+  {
+    "label": "Power Factor",
+    "expected": ">=0.95",
+    "bis_standard": "IS 16107",
+    "description": "The power factor of the LED driver shall be greater than or equal to 0.95."
+  },
+  {
+    "label": "Impact Resistance Rating",
+    "expected": "IK08",
+    "bis_standard": "IS 10322",
+    "description": "The luminaire enclosure shall comply with IK08 impact resistance protection."
+  },
+  {
+    "label": "Surge Protection",
+    "expected": "10kV",
+    "bis_standard": "IS 10322 Part 5 Section 3",
+    "description": "The LED luminaire driver shall provide surge protection of at least 10 kV."
+  }
+]

@@ -1,0 +1,526 @@
+Page 1 of 8 
+ 
+Tender 
+Document 
+for 
+Supply 
+and 
+Installation 
+for 
+LED 
+Luminaire 
+Light 
+ 
+The Buyer invites E-Bids in Two Bid System (i.e. Technical/Documentary and Financial Bid) 
+from eligible manufacturers, authorized distributors or dealers or any other agencies-authorized 
+to quote through GeM portal on mutually agreed terms and conditions and satisfactory 
+performance Supply and Installation for LED Luminaire Light as per below speciation: 
+ 
+Technical Specification:  
+ 
+àમ 
+સાધનો 
+Ìયુનġમ Øપેશીફીકેશન 
+1 
+Product 
+LED Luminaire for Road and Street 
+Lights (V2) 
+2 
+Quantity 
+425 Nos. 
+2 
+LED 
+Rating 
+(in 
+Watts)/System 
+Wattage/Rated Power 
+36W 
+3 
+Warranty for free replacement (in years) 
+2 Year or More 
+5 
+Luminaire System Efficacy (Lumen/watt) 
+>/= 100 Lm/Watt Or More 
+6 
+Ingress Protection (IP Rating) as per 
+IS:10322 (Part 1):1982 latest 
+IP66 or Higher 
+7 
+Automatic Higher Cut oﬀ voltage above 300 
+volt 
+Yes 
+8 
+Input 
+operating 
+voltage 
+range 
+and 
+frequency 
+140 to 270 Volts AC at 50 Hz +/-2 
+10 
+The luminaire body must be corrosion 
+resistant powder coated 
+Yes 
+11 
+Protection of the entire housing(both LED 
+section 
+and 
+driver 
+section)as 
+per 
+IS:10322(Part 1):1982 latest 
+IP66 or Higher 
+13 
+Luminaries light transparency should be of 
+Toughened glass  
+Yes 
+16 
+Number of electronic control gear (power 
+supplies) 
+1 No. Or More 
+17 
+The Luminaires works on single phase three 
+wires system (Phase, Neutral and Earth) 
+Yes 
+18 
+Provision of luminaire connecting wire 
+along with the supply of material 
+100 cm Or More 
+19 
+Colour temperature  
+White 6500K 
+20 
+LED Make 
+OSRAM / NICHIA / CREE / 
+SAMSUNG / SEOUL / LUMILEDS / 
+PHILIPS / SYSKA / LUMENMAX / 
+EVERLIGHT 
+/ 
+EDISON 
+/ 
+BRIDGELUX 
+/ 
+NATIONSTAR 
+/ 
+REFOND/APT 
+21 
+Other protection 
+Output Short Circuit Protection, 
+Output Overload Protection, Input 
+Over Voltage Protection, Input and 
+Output Reverse Polarity and as per 
+IS 10322/Part 5/Section 3 
+22 
+Optic lense materal (UV stabilised) 
+Poly carbonate lense 
+23 
+Operating temperature range 
+-10 deg C to +55 deg C 
+Page 2 of 8 
+ 
+24 
+The luminaire shall be protected against 
+surges and transients ( Internal) 
+>/=5KV 
+25 
+The luminaire shall be protected against 
+surges and transients (External) 
+>/=10KV 
+26 
+Installation 
+Details(Fabrication 
+and 
+Fittings) 
+0.5" Dia. Or Higher and 1.5 Foot 
+Length or Higher GI Pipe and 
+Clamp and Cable along with Proper 
+Installation and Power supply with 
+testing. 
+ 
+Eligibility Criteria: Prospective bidders must meet the following eligibility criteria: 
+1. Bidder must submit declaration that it is not black-listed by any central/state government/Public 
+Sector Undertaking written on 300 Rs. Stamp paper. (Not Older than 3 Months) 
+ 
+2. GST Clearance Certificate, Tender without GST Clearance Certificate will be rejected. 
+ 
+3. Bidder or its OEM must have ISO 9001, LM 79 & LM 80, ISO CERTIFICATE, NABL TEST REPORT, 
+CAT-3 R&B Approval, BIS Certificate. 
+4. OEM Authorization Certificate is to be submitted for LED, Pipe/bracket & Cable with BID Number. 
+5. Financial Criteria:- Bidder needs to have an annual average turnover  of Min. 20.00 lakh 
+(Average) last three financial years. CA Certified Turnover Certificate along with Networth 
+Certificate of Last 3 Years. 
+ 
+6. Bidder's offer is liable to be rejected if they don't upload any of the certificates / Documents 
+sought in the bid documents. 
+ 
+7. Only Gujarat State Parties liable to Participate in Bid along with Service Centre nearby of Kadi. 
+ 
+8. Bidder must have an office in Gujarat; submit the valid document with the office address for proof 
+of office location.  
+ 
+9. Bidders must submit the product specification data sheet with sign stamp compulsory to accept 
+the bid product’s specification.  
+ 
+10. Bidder Need to Provide their financial Standing. 
+ 
+11. Bidder needs to provide 2 years of free replacement in warranty. 
+ 
+12. Bidder/OEM needs to have an single Purchase order & Completion certificate (CRAC) of min. 5.00 
+lakh of LED Street light on GEM portal. 
+ 
+13. Price (All Items LED, Pipe, Bracket, Cable etc.) inclusive of all taxes and with Supply and 
+Installation to be quoted. 
+ 
+14. The bidder will be completely liable for replacement of product with manufacturing defects, 
+damage during transportation or installation and product of poor quality during whole 
+warranty period. 
+ 
+15. Bidder needs to submit GST, Pan Card, Cancel Cheque and EFT Mandate form.  
+Page 3 of 8 
+ 
+16. The Succsesfull bidder will have to Supply and Installation of the Goods at different places as 
+mentioned by the Taluka Panchayat, Kadi. And a certificate from the competent authority for 
+Supply and Installation of goods Need to be Submit. Only then will the bidder be considered 
+eligible for payment. 
+ 
+ 
+Scope of Work: Supply and Installation of Led Luminaire Light at Various Location of Kadi 
+Taluka. 
+ 
+ 
+Bid Opening and Evaluation: The selection committee will meticulously evaluate the submitted 
+proposals, focusing on technical specifications, past performance, and financial feasibility. 
+Additionally, compliance documents specified in the technical bid will be rigorously examined. The 
+decision of the selection committee is definitive and binding, forming the basis for the contract 
+award. 
+ 
+Bid Terms and Guideline for Document Preparation : 
+ 
+ 
+Corrigendum Acknowledgment: Bidders are required to acknowledge any corrigendum 
+published regarding the tender document before submitting their bids. 
+ 
+Understanding Tender Requirements: Bidders are urged to carefully review both the tender 
+advertisement and the tender document. It is crucial to understand the specific documents 
+required for bid submission, including the number of volumes and documents, along with 
+their names and content. Deviations from these instructions may result in bid rejection. 
+ 
+Bid Document Preparation: Bidders should prepare the bid documents in advance as 
+outlined in the tender document/schedule. Documents should preferably be in PDF format, 
+scanned at 100 dpi with black and white settings. 
+ 
+ 
+Standard Bid Preparation: Sellers must follow the standard bid preparation process and 
+provide a detailed plan of the working methodology during the technical stage. Rates should 
+be offered unconditionally and inclusive of all taxes. Any conditional submissions will lead to 
+bid rejection. Bidders must quote rates on the GEM portal and in the Financial Bid Envelope. 
+Any mention of price bid details in the technical bid will result in rejection. 
+ 
+ 
+No Conditional Offers: Conditional offers or quotations will not be accepted. No variations in 
+the terms and conditions of the tender, including deviations from standards, 
+specifications, or terms of supply, will be allowed. 
+ 
+Penalties and Liquidated Damages: In case of delays or non-compliance with the specified 
+terms, penalties or liquidated damages may be imposed as per the terms and conditions 
+outlined in the tender document 
+ 
+ 
+Bid Securing Declaration: Bidders are required to availed Affidavit for Bid Securing 
+Declaration, accepting that any withdrawal or modification of bids during the validity period, 
+failure to sign the contract, or non-submission of performance security before the specified 
+deadline will result in suspension for three (3) years from the disqualification date. 
+ 
+ 
+Standard Time Reference: The server time displayed on the bidders' dashboard will be 
+considered the standard time for referencing deadlines related to bid submission and bid 
+opening. Bidders must adhere to this time during bid submission. 
+ 
+ 
+Document Accessibility: Uploaded tender documents will only be accessible after the tender 
+opening by authorized bid openers. 
+ 
+Bid Submission Confirmation: Upon successful and timely bid submission, the portal will 
+generate a bid submission confirmation message. A bid summary will be displayed, 
+Page 4 of 8 
+ 
+indicating the bid number, date, and time of submission, along with other relevant details. 
+ 
+ 
+Prescribed Formats: Bids must adhere precisely to the prescribed formats provided. Any 
+modifications or rewording of formats will not be acceptable. Tenders must be submitted 
+online on the Gem Portal. Resellers participating in the bid may utilize their OEM credentials, 
+including quality documents, certificates, and past experiences. 
+ 
+Compliance and Timeliness: Incomplete tenders, amendments, and additions made after the 
+opening, as well as tenders submitted after the due date, will be disregarded. Sellers are 
+responsible for ensuring sufficient warranty coverage for the product as per the tender 
+requirements. 
+ 
+Right to Reject Offers: 
+ 
+o 
+If the validity of registration of the Mfg or reseller unit of the tender item to be quoted by the 
+bidder has expired, the bidders will be treated as unregistered unless he has applied for 
+renewal of registration within the validity of the registration period. 
+o 
+Not with standing anything contained in this Tender Document, the Buyer reserves the right to 
+accept, or reject any or all Tender(s) and to annul the Selection Process, at any time without 
+any liability or any obligation for such acceptance, rejection or annulment, and without 
+assigning any reasons thereof. 
+o 
+Scrutiny of the Tenders will be done as per terms & conditions of the tender, Govt. Resolutions 
+issued from time to time and guidelines given in the manual of office procedure for purchase 
+of stores by the Govt. Departments issued by GeM and Government of Gujarat. 
+o 
+In the first instance only the "Technical Bid" (online) containing Technical supporting 
+documents will be opened by any buyer officer, on the date of opening of the tender and taken 
+into consideration for finalization.. Bid Inviting Authority, or his authorized representative (s) 
+has the right to inspect the factories/store of Bidders, before, accepting the rate quoted by 
+them, or before releasing any purchase order(s), or at any point of time during the 
+continuance of Bid and also has the right to reject the Bid or terminate/cancel the purchase 
+orders issued and or not to reorder, based on adverse reports brought out during such 
+inspections 
+o 
+Bid scrutiny process is organized for once only by the Technical committee. Seller needs to 
+read the document carefully and provide the desired document in one attempt only, detailed 
+clause specific compliance need to provide in technical stage. 
+o 
+The seller must diligently address and prevent any conflict of interest during the bidding 
+process. To ensure this, the seller is required to submit an Undertake Document along with the 
+technical bids. This document serves as a formal commitment from the seller, confirming that 
+they do not have any conflicts of interest that could influence or compromise the integrity of 
+the bidding process. By submitting this document, the seller affirms their adherence to ethical 
+standards and fair competition, promoting a transparent and unbiased tendering  procedure. 
+ 
+Clarification on Tender Document: 
+ 
+o 
+Amendment of Tender Document : At any time prior to the deadline for submission of Tender, 
+the Buyer may, for any reason, whether at its own initiative or in response to clarifications 
+requested by a Tenderer, modify the Tender Document by the issuance of Addendum/ 
+Amendment. The Seller declares that no previous transgressions occurred in the last three 
+years with any Government Organization that could justify his exclusion from the bid process. 
+o 
+All such amendments will be notified through Gem Portal to all Tenderers who have 
+downloaded the Tender Document by online portal gem.gov.in. The amendments will be 
+posted Only on the Official Website www.gem.gov.in along with the revised Tender Document 
+containing the amendments and will be binding on all Tenderers. Declaration need to   
+submit regarding Non-engagement of child labour. 
+ 
+Page 5 of 8 
+ 
+o 
+In order to afford the Tenderers a reasonable time for taking an amendment into account, or 
+for any other reason, the Buyer may, in its sole discretion, extend the Tender Submission Date. 
+ 
+o 
+After the technical representation, the buyer may ask for design or/and detailed workflow in 
+soft copy or other way. Only that seller will mark as qualified bidders, whose details match 
+with buyer’s expectation. 
+o 
+Cost involved in submitting the bids, attending the tender opening meeting, arrangements for 
+the demonstration/presentation etc. shall be borne by the bidder. Seller needs to provide   
+Bank mandate form latest after bid publish Date. 
+ 
+o 
+Seller needs to provide confirmation regarding provision of technical assistance where by buyer 
+shall undertake on-site technical support whenever required. Necessary warranty bond affidavit 
+Needs to provide in bid. 
+ 
+o 
+During evaluation and comparison of bids, the purchaser may, at his discretion, ask the bidder 
+for clarifications on the bid. The request for clarification shall be given in writing by 
+registered/speed post, asking the tenderer to respond by a specified date, and also mentioning 
+therein that, if the tenderer does not comply or respond by the date, his tender will be liable to 
+be rejected. Depending on the outcome, such tenders are to be ignored or considered further. 
+No change in prices or substance of the bid shall be sought, offered or permitted. No post-bid 
+clarification at the initiative of the bidder shall be entertained. The shortfall 
+information/documents should be sought only in case of historical documents which pre-
+existed at the time of the tender opening and which have not undergone change since then. 
+These should be called only on basis of the recommendations of the TC. (Example: if the 
+Permanent Account Number, registration with sales tax/ VAT has been asked to besubmitted 
+and the tenderer has not provided them, these documents may be asked for with a target date 
+as above). So far as the submission of documents is concerned with regard to qualification 
+criteria, after submission of the tender, only related shortfall documents should be asked for 
+and considered. For example, if the bidder has submitted a supply order without its 
+completion/performance certificate, the certificate can be asked for and considered. However, 
+no new supply order should be asked for so as to qualify the bidder. 
+ 
+o 
+Evaluation of Techno-commercial Bid : In evaluation of the techno-commercial bid, conformity 
+of the eligibility/qualification, technical and commercial conditions of the offered goods to 
+those in the bid document is ascertained. Additional factors, if any, incorporated in the tender 
+documents may also be considered in the manner indicated therein. Evaluation has to be 
+based only on the conditions included in the tender document and  any  other  condition  
+should not form the basis of this evaluation 
+o 
+Evaluation of eligibility/ qualification Criteria: Procuring Entity will determine, to its 
+satisfaction, whether the tenderers are eligible, qualified and capable in all respects to perform 
+the contract satisfactorily. Tenders that do not meet the required eligibility/qualification 
+criteria prescribed will be treated as unresponsive and not considered further. This 
+determination will, inter-alia, take into account the tenderer’s financial, technical and 
+production capabilities for satisfying all of Procuring Entity’s requirements as incorporated in 
+the tender document. Such determination will be based upon scrutiny and examination of all 
+relevant data and details submitted by the tenderer in its/his tender as well as such other 
+allied information as deemed appropriate by Procuring Entity 
+ 
+o 
+Evaluation of Technical Suitability: The description, specifications, drawings and other 
+technical terms and conditions are examined by TC in general and a technical member of the 
+TC in particular. Nobody outside the TC should be allowed to determine this evaluation. The 
+tender document should clearly state whether alternative offers/makes/models would be 
+considered or not and, in the absence of an express statement to the effect, these should not be 
+allowed. An important document is the exceptions/deviation form submitted by the tenderer. 
+It is important to judge whether an exception/deviation is minor or major. Minor 
+exceptions/deviations may be waived provided they do not constitute any material deviation 
+and do not have significant financial impact and, also, would not prejudice or affect the ranking 
+Page 6 of 8 
+ 
+order of the price bid. Exceptions/deviations should not grant the tenderer any undue 
+advantage vis-à-vis other tenders and Procuring Entity 
+ 
+ 
+o 
+Normally, the comparison of the responsive tenders shall be on total outgo from the Procuring 
+Entity’s pocket, for the procurement to be paid to the supplier or any third party, including all 
+elements of costs as per the terms of the proposed contract, including any taxes, duties, levies 
+etc, freight insurance etc. Therefore it should normally be on the basis of CIF/ FOR destination 
+basis, duly delivered, commissioned, as the case may be: Product must contain local contain as 
+per set by GOI (Class 1) an affidavit for local contain needs to provide in technical bid. 
+ 
+Signing and Sealing of Tender: 
+ 
+ 
+o 
+The seller is required to provide a notarized affidavit confirming that they have fully read and 
+thoroughly understood the tender requirements. The affidavit must state that the seller 
+accepts all terms and conditions of the tender, including any corrigendum or addendum 
+issued, if any. 
+ 
+o 
+All the copies of the tender shall be duly signed at the appropriate places as indicated in the TE 
+documents and all other pages of the tender including printed literature, if any, shall be 
+initialled by the same person(s) signing the tender. The tender shall not contain any erasure 
+or overwriting, except as necessary to correct any error made by the tenderer and, if there is 
+any such correction; the same shall be initialled by the person(s) signing the tender. 
+ 
+Corrupt or Fraudulent Practices: 
+o 
+It is required by all concerned to observe the highest standard of ethics during the 
+procurement and execution of such contracts. The purchaser .(b) will reject a proposal for 
+award if it determines that the Tenderer recommended for award has engaged in corrupt or 
+fraudulent practices in competing for the contract in question;(c) will declare a firm ineligible, 
+either indefinitely or for a stated period of time, to be awarded a contract by the purchaser if it 
+at any time determines that the firm has engaged in corrupt or fraudulent practices in 
+competing for, or in executing the contract. Seller needs to undertake for non- conviction in 
+bid while submit the documents. 
+ 
+Inspection, Testing and Quality Control : 
+ 
+o 
+The purchaser and/or its nominated representative(s) will, without any extra cost to the 
+purchaser, inspect and/or test the ordered goods and the related services to confirm their 
+conformity to the contract specifications and other quality control details incorporated in the 
+contract. The purchaser shall inform the supplier in advance, in writing, the purchaser’s 
+programme for such inspection and, also the identity of the officials to be deputed for this 
+purpose. Integrity Pact guidelines "The Buyer" And “The Seller” hereby agree not to indulge in 
+any corrupt practices including without limitation any activity or action to influence the 
+transaction on any aspect of contract and commit to take all measures necessary to prevent 
+corruption maintaining complete transparency and fairness in all activities related to GeM. 
+Users agree to follow and adhere with the Integrity Pact guidelines. An Undertake certificate 
+for integrity pact need to provide in bid.The Item supplied should be brand new and should be 
+installed/commissioned at the locations specified by Consignee at no extra cost. This office is 
+not bound to provide any mode of transport in respect of men or material required for the 
+contract. Bidder needs to ensure the Quality manufacturing, detailed Step for Quality plan 
+needs to provide with bid. 
+ 
+Termination for insolvency: 
+ 
+o 
+If the supplier becomes bankrupt or otherwise insolvent, the purchaser reserves the right to 
+Page 7 of 8 
+ 
+terminate the contract at any time, by serving written notice to the supplier without any 
+compensation, whatsoever, to the supplier, subject to further condition that such termination 
+will not prejudice or affect the rights and remedies which have accrued and / or will accrue 
+thereafter to the Purchaser/Consignee. If the Seller makes incorrect statement on this subject, 
+he can be disqualified from the bid process and action can be taken as per the procedure 
+mentioned in "Incident Management Policy". Seller needs to submit  latest  Bank  
+Solvency certificate in proof of financial standing. 
+ 
+Force Majeure: 
+o 
+Notwithstanding the provisions contained in TED the supplier shall not be liable for 
+imposition of any such sanction so long the delay and/or failure of the supplier in fulfilling its 
+obligations under the contract is the result of an event of Force Majeure 
+ 
+o 
+For purposes of this clause, Force Majeure means an event beyond the control of the supplier 
+and not involving the supplier’s fault or negligence and which is not foreseeable and not 
+brought about at the instance of, the party claiming to be affected by such event and which has 
+caused the non–performance or delay in performance. Such events may include, but are not 
+restricted to, acts of the Purchaser/Consignee either in its sovereign or contractual capacity, 
+wars or revolutions, hostility, acts of public enemy, civil commotion, sabotage, fires, floods, 
+explosions, epidemics, quarantine restrictions, strikes excluding by its employees, lockouts 
+excluding by its management, and freight embargoes 
+ 
+o 
+If a Force Majeure situation arises, the supplier shall promptly notify the Purchaser/Consignee 
+in writing of such conditions and the cause thereof within twenty-one days of occurrence of 
+such event. Unless otherwise directed by the Purchaser/Consignee in writing, the supplier 
+shall continue to perform its obligations under the contract as far as reasonably practical, and 
+shall seek all reasonable alternative means for performance not prevented by the Force 
+Majeure event 
+ 
+o 
+If the performance in whole or in part or any obligation under this contract is prevented or 
+delayed by any reason of Force Majeure for a period exceeding sixty days, either party may at 
+its option terminate the contract without any financial repercussion on either side 
+ 
+o 
+In case due to a Force Majeure event the Purchaser/Consignee is unable to fulfil its contractual 
+commitment and responsibility, the Purchaser/Consignee will notify the supplier accordingly 
+and subsequent actions taken on similar lines described in above sub- paragraphs 
+ 
+Other Important Terms 
+ 
+o 
+If dispute or difference of any kind shall arise between the Purchaser/Consignee and the 
+supplier in connection with or relating to the contract, the parties shall make every effort to 
+resolve the same amicably by mutual consultations. The jurisdiction for the settlement of 
+disputes will be at the office of The Buyer. 
+ 
+o 
+The seller is required to provide a notarized affidavit on a stamp paper of INR 300, confirming 
+non-blacklisting status and demonstrating financial standing. 
+ 
+o 
+If the parties fail to resolve their dispute or difference by such mutual consultation within 
+twenty one days of its occurrence, then, unless otherwise provided in the SCC, either the 
+Purchaser/Consignee or the supplier may give notice to the other party of its intention to 
+commence arbitration, as hereinafter provided the applicable arbitration procedure will be as 
+per the Arbitration and Conciliation Act, 1996 of India. In the case of a dispute or difference 
+arising between the Purchaser/Consignee and a domestic Supplier relating to any matter 
+arising out of or connected with the contract, such dispute or difference shall be referred to 
+the sole arbitration of an officer, appointed to be the arbitrator by the buyer.  
+Page 8 of 8 
+ 
+ 
+o 
+Original Power of Attorney or other proof of authority of the person who has signed the 
+Tender OR copy of Power of Attorney attested by a Gazetted Officer or a Notary Public in proof  
+of the authority of the person who has signed the Tender 
+ 
+o 
+Prices - The vendors are required to quote prices as per GEM general terms and condition 
+(Financial Bid). The quoted rates shall be inclusive of all taxes, duties, Goods and Service Tax 
+(GST) etc. as applicable and no extra cost shall be payable on this account. 
+ 
+o 
+The seller is required to provide an Anti-Profiteering Certificate under the Goods and Services 
+Tax (GST) regulations. This certificate serves as a declaration that the seller will comply with 
+the anti-profiteering provisions outlined in the GST laws. Anti-profiteering measures are in 
+place to ensure that businesses pass on the benefits of reduced tax rates or input tax credit to 
+consumers by lowering prices or maintaining the same prices after the implementation of 
+GST-related reforms.

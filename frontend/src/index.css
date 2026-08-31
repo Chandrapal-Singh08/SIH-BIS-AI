@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Government BIS Theme */
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: #f3f6fa;
+  color: #1f2937;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #003366;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+
+/* Custom reusable classes */
+
+.btn-primary {
+  @apply bg-[#003366] hover:bg-[#002244] text-white px-5 py-3 rounded-lg transition;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow p-6;
+}
