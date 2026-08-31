@@ -23,20 +23,25 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration (Local + Vercel)
+# CORS Configuration
+# Works for Localhost + Vercel + Render Frontend
 # ======================================================
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 allowed_origins = [
+    # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 
-    # Production Frontend
+    # Vercel Frontend
     "https://sih-bis-ai.vercel.app",
+
+    # Render Frontend (replace if your frontend is deployed on Render)
+    "https://sih-bis-ai-frontend.onrender.com",
 ]
 
-# Add Render environment variable if present
+# Add environment variable dynamically
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
 
@@ -49,7 +54,7 @@ app.add_middleware(
 )
 
 # ======================================================
-# Static File Directories
+# Static Directories
 # ======================================================
 
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -96,7 +101,6 @@ def root():
         "project": "AI Powered BIS Tender Compliance Engine",
         "version": "1.0.0",
         "deployment": "Render",
-        "frontend": "https://sih-bis-ai.vercel.app",
         "message": "Backend API is running successfully 🚀",
         "modules": [
             "Upload PDF",
@@ -109,12 +113,12 @@ def root():
     }
 
 # ======================================================
-# Health Endpoint (Render Health Check)
+# Render Health Check Endpoint
 # ======================================================
 
 @app.get("/health", tags=["Health"])
 def health():
     return {
         "status": "healthy",
-        "service": "AI Powered BIS Tender Compliance Engine"
+        "service": "AI Powered BIS Tender Compliance Engine",
     }
