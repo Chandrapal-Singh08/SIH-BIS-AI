@@ -1,102 +1,85 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "https://sih-bis-ai.onrender.com",
-  timeout: 180000,
+const API = axios.create({
+  baseURL: "https://sih-bis-ai.onrender.com",
+  timeout: 60000,
 });
 
-// -------------------------------------------
-// Error Logger
-// -------------------------------------------
-
-api.interceptors.response.use(
+API.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("API Error:", error);
-
-    if (error.response) {
-      console.error("Status:", error.response.status);
-      console.error("Data:", error.response.data);
-    } else {
-      console.error("Backend server unreachable.");
-    }
-
-    return Promise.reject(error);
+    throw error;
   }
 );
 
-// -------------------------------------------
-// Upload
-// -------------------------------------------
-
+// ---------------- Upload ----------------
 export const uploadTender = async (file) => {
-  const form = new FormData();
-  form.append("file", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const res = await api.post("/upload/", form, {
+  const { data } = await API.post("/upload/", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 
-  return res.data;
+  return data;
 };
 
-// OCR
+// ---------------- OCR ----------------
 export const extractOCR = async (filename) => {
-  const res = await api.get("/ocr/", {
+  const { data } = await API.get("/ocr/", {
     params: { filename },
   });
 
-  return res.data;
+  return data;
 };
 
-// Validation
+export const downloadOCRText = async (filename) => {
+  const { data } = await API.get("/ocr/download/", {
+    params: { filename },
+  });
+
+  return data;
+};
+
+// ---------------- Validator ----------------
 export const validateTender = async (filename) => {
-  const res = await api.get("/validate/", {
+  const { data } = await API.get("/validate/", {
     params: { filename },
   });
 
-  return res.data;
+  return data;
 };
 
-// Recommendation
+// ---------------- Recommendation ----------------
 export const getRecommendations = async (filename) => {
-  const res = await api.get("/recommend/", {
+  const { data } = await API.get("/recommend/", {
     params: { filename },
   });
 
-  return res.data;
+  return data;
 };
 
-// AI Summary
-export const getAISummary = async (filename) => {
-  const res = await api.get("/assistant/summary", {
-    params: { filename },
-  });
-
-  return res.data;
-};
-
-// AI Chat
+// ---------------- AI Assistant ----------------
 export const askAssistant = async (filename, question) => {
-  const res = await api.post("/assistant/ask", {
+  const { data } = await API.post("/assistant/", {
     filename,
     question,
   });
 
-  return res.data;
+  return data;
 };
 
-// Report
-export const generateReport = async (filename) => {
-  const res = await api.get("/report/generate", {
-    params: { filename },
-  });
-
-  return res.data;
+// ---------------- PDF Preview ----------------
+export const getTenderPDF = (filename) => {
+  return `${API.defaults.baseURL}/pdf/${encodeURIComponent(filename)}`;
 };
 
-export default api;
+// ---------------- Report Download ----------------
+export const downloadReport = (filename) => {
+  return `${API.defaults.baseURL}/reports/${filename.replace(".pdf", "_report.pdf")}`;
+};
+
+export default API;
