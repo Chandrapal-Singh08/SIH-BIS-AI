@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -12,6 +12,10 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
+
+# ======================================================
+# Directories (backend/uploads & backend/reports)
+# ======================================================
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 REPORT_DIR = BASE_DIR / "reports"
@@ -30,16 +34,22 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration
+# CORS Configuration (Local + Render + Vercel)
 # ======================================================
 
 allowed_origins = [
+    # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://sih-bis-ai.vercel.app",
+
+    # Render Frontend
     "https://sih-bis-ai-frontend.onrender.com",
+
+    # Vercel Frontend
+    "https://sih-bis-ai.vercel.app",
 ]
 
+# Optional custom frontend URL from Render Environment Variable
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
@@ -54,14 +64,14 @@ app.add_middleware(
 )
 
 # ======================================================
-# Static Files
+# Static File Mounts
 # ======================================================
 
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
-app.mount("/reports", StaticFiles(directory=REPORT_DIR), name="reports")
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
+app.mount("/reports", StaticFiles(directory=str(REPORT_DIR)), name="reports")
 
 # ======================================================
-# Routers
+# Import Routers
 # ======================================================
 
 from api.standards import router as standards_router
@@ -72,6 +82,10 @@ from api.recommend import router as recommend_router
 from api.assistant import router as assistant_router
 from reporting.report_api import router as report_router
 
+# ======================================================
+# Register Routers
+# ======================================================
+
 app.include_router(standards_router)
 app.include_router(upload_router)
 app.include_router(ocr_router)
@@ -81,7 +95,7 @@ app.include_router(assistant_router)
 app.include_router(report_router)
 
 # ======================================================
-# Health Endpoints
+# Root Endpoint
 # ======================================================
 
 @app.get("/", tags=["Health"])
@@ -91,39 +105,60 @@ def root():
         "project": "AI Powered BIS Tender Compliance Engine",
         "version": "1.0.0",
         "deployment": "Render",
-        "frontend": "https://sih-bis-ai-frontend.onrender.com"
+        "frontend": "https://sih-bis-ai-frontend.onrender.com",
+        "message": "Backend API is running successfully 🚀",
+        "modules": [
+            "Upload PDF",
+            "OCR Extraction",
+            "BIS Validator",
+            "AI Recommendation Engine",
+            "Compliance Report Generator",
+            "Gemini AI Assistant",
+        ],
     }
 
+# ======================================================
+# Health Check Endpoint (Render)
+# ======================================================
 
 @app.get("/health", tags=["Health"])
 def health():
     return {
-        "status": "healthy"
+        "status": "healthy",
+        "service": "AI Powered BIS Tender Compliance Engine",
     }
 
+# ======================================================
+# Render HEAD Request Fix
+# Prevents Render health checks from returning 405
+# ======================================================
 
 @app.head("/", include_in_schema=False)
 def head_root():
     return {}
-
 
 @app.head("/health", include_in_schema=False)
 def head_health():
     return {}
 
 # ======================================================
-# PDF Serving (PDF Review Page)
+# PDF Viewer Endpoint
+# Used by Review Page
 # ======================================================
 
-@app.get("/pdf/{filename}")
+@app.get("/pdf/{filename}", tags=["PDF"])
 def serve_pdf(filename: str):
+
     file_path = UPLOAD_DIR / filename
 
     if not file_path.exists():
-        raise HTTPException(status_code=404, detail="PDF not found")
+        raise HTTPException(
+            status_code=404,
+            detail="PDF not found."
+        )
 
     return FileResponse(
-        file_path,
+        path=str(file_path),
         media_type="application/pdf",
         filename=filename,
     )
