@@ -1,72 +1,86 @@
-import os
-from pathlib import Path
-from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
+from app.config import GEMINI_API_KEY
 
 # ======================================================
-# Load Environment Variables
+# Gemini Client
 # ======================================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not GEMINI_API_KEY:
-    raise RuntimeError("GEMINI_API_KEY is missing in Render environment.")
 
 # ======================================================
-# Lazy Gemini Initialization
+# AI Tender Summary
 # ======================================================
 
-_model = None
+def generate_tender_summary(tender_text: str):
+    """
+    Generate a structured AI summary of the uploaded tender.
+    """
 
-def get_model():
-    global _model
+    try:
+        prompt = f"""
+You are an AI BIS Procurement Assistant for Smart India Hackathon 2026.
 
-    if _model is None:
-        genai.configure(api_key=GEMINI_API_KEY)
+Analyze the following government tender and generate a professional summary.
 
-        # Stable production model
-        _model = genai.GenerativeModel("gemini-1.5-flash")
+Include these sections:
 
-    return _model
+1. Product Category
+2. Purpose of Tender
+3. Mandatory BIS Standards Mentioned
+4. Important Technical Specifications
+5. Warranty Requirements
+6. Compliance Risks
+7. Overall Recommendation
+
+Tender Text:
+{tender_text[:12000]}
+"""
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        return response.text
+
+    except Exception as e:
+        print("Gemini Summary Error:", e)
+        return f"Gemini Error: {str(e)}"
+
 
 # ======================================================
-# AI Assistant Function
+# AI Procurement Chat Assistant
 # ======================================================
 
-def ask_ai(question: str, tender_text: str) -> str:
-    prompt = f"""
-You are an AI compliance assistant for the Bureau of Indian Standards (BIS).
+def ask_tender_question(tender_text: str, question: str):
+    """
+    Answer procurement questions only from uploaded tender.
+    """
 
-Context:
-The following text is extracted from a government tender document.
+    try:
+        prompt = f"""
+You are an expert BIS Procurement Assistant.
 
----------------- TENDER TEXT ----------------
-{tender_text}
---------------------------------------------
+Rules:
+- Answer ONLY from the uploaded tender.
+- If information is not present, say "Not mentioned in the tender."
+- Keep answers concise and professional.
 
-Answer ONLY using the tender content.
-
-If information is missing, reply:
-"This information is not present in the uploaded tender."
+Tender:
+{tender_text[:12000]}
 
 Question:
 {question}
-
-Keep the answer concise, professional, and BIS-focused.
 """
 
-    try:
-        model = get_model()
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
-        if response.text:
-            return response.text.strip()
-
-        return "No response generated."
+        return response.text
 
     except Exception as e:
-        print(f"[Gemini Error] {e}")
+        print("Gemini Chat Error:", e)
         return f"Gemini Error: {str(e)}"
