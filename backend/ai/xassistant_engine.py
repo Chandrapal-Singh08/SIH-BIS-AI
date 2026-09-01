@@ -1,86 +1,85 @@
-from google import genai
+import google.generativeai as genai
 from app.config import GEMINI_API_KEY
 
 # ======================================================
-# Gemini Client
+# Configure Gemini
 # ======================================================
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
+# Use the current supported model
+MODEL_NAME = "gemini-2.5-flash"
 
-# ======================================================
-# AI Tender Summary
-# ======================================================
 
 def generate_tender_summary(tender_text: str):
     """
-    Generate a structured AI summary of the uploaded tender.
+    Generate AI summary of uploaded tender.
     """
 
-    try:
-        prompt = f"""
-You are an AI BIS Procurement Assistant for Smart India Hackathon 2026.
+    if not GEMINI_API_KEY:
+        return "Gemini API key is not configured."
 
-Analyze the following government tender and generate a professional summary.
+    if not tender_text.strip():
+        return "Tender text is empty."
 
-Include these sections:
+    prompt = f"""
+You are a BIS Procurement Expert.
 
-1. Product Category
-2. Purpose of Tender
-3. Mandatory BIS Standards Mentioned
-4. Important Technical Specifications
-5. Warranty Requirements
-6. Compliance Risks
-7. Overall Recommendation
+Analyze the following Indian Government Tender.
 
-Tender Text:
-{tender_text[:12000]}
+Provide:
+1. Tender Summary.
+2. Product Category.
+3. Important BIS Clauses.
+4. Missing Compliance Points.
+5. Risk Level (LOW / MEDIUM / HIGH).
+
+Tender:
+{tender_text}
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        response = model.generate_content(prompt)
 
-        return response.text
+        if response.text:
+            return response.text
+
+        return "No response generated."
 
     except Exception as e:
-        print("Gemini Summary Error:", e)
         return f"Gemini Error: {str(e)}"
 
 
-# ======================================================
-# AI Procurement Chat Assistant
-# ======================================================
-
-def ask_tender_question(tender_text: str, question: str):
+def procurement_chat(question: str, tender_text: str):
     """
-    Answer procurement questions only from uploaded tender.
+    Chat with uploaded tender.
     """
 
-    try:
-        prompt = f"""
-You are an expert BIS Procurement Assistant.
+    if not GEMINI_API_KEY:
+        return "Gemini API key is not configured."
 
-Rules:
-- Answer ONLY from the uploaded tender.
-- If information is not present, say "Not mentioned in the tender."
-- Keep answers concise and professional.
+    prompt = f"""
+You are an AI BIS Procurement Assistant.
 
-Tender:
-{tender_text[:12000]}
+Tender Context:
+{tender_text}
 
-Question:
+User Question:
 {question}
+
+Answer in simple English with BIS compliance guidance.
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        response = model.generate_content(prompt)
 
-        return response.text
+        if response.text:
+            return response.text
+
+        return "No answer generated."
 
     except Exception as e:
-        print("Gemini Chat Error:", e)
         return f"Gemini Error: {str(e)}"
