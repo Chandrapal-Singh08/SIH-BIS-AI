@@ -1,87 +1,99 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from pathlib import Path
 
-from ai.xassistant_engine import ask_ai
+from app.config import UPLOAD_DIR
+from ai.xassistant_engine import (
+    generate_tender_summary,
+    ask_tender_question,
+)
 
 router = APIRouter(
     prefix="/assistant",
-    tags=["AI Assistant"]
+    tags=["Gemini AI Assistant"],
 )
 
-# ----------------------------------------------------
-# Project Root → uploads/
-# ----------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-UPLOAD_DIR = BASE_DIR / "uploads"
+# ======================================================
+# Request Model
+# ======================================================
 
-
-# ----------------------------------------------------
-# Request Body Model
-# ----------------------------------------------------
-class AssistantRequest(BaseModel):
+class QuestionRequest(BaseModel):
     filename: str
     question: str
 
 
-# ----------------------------------------------------
-# GET → AI Summary of Tender
-# ----------------------------------------------------
-@router.get("/")
-def get_ai_summary(filename: str):
+# ======================================================
+# AI Tender Summary
+# ======================================================
+
+@router.get("/summary")
+def get_summary(filename: str):
     """
-    Returns a concise AI-generated summary of the uploaded tender.
+    Generate AI summary from OCR extracted tender text.
     """
 
     txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
 
+    print("\n========== GEMINI SUMMARY ==========")
+    print("Filename :", filename)
+    print("OCR File :", txt_path)
+    print("Exists   :", txt_path.exists())
+
     if not txt_path.exists():
         raise HTTPException(
             status_code=404,
-            detail="OCR text not found. Please extract OCR first."
+            detail="OCR text not found. Please run OCR first."
         )
 
-    tender_text = txt_path.read_text(encoding="utf-8")
-
-    summary_question = (
-        "Summarize this government tender in 6-8 bullet points. "
-        "Include product category, quantity, important BIS requirements, "
-        "eligibility criteria, warranty, voltage, IP rating, and key technical specifications."
+    tender_text = txt_path.read_text(
+        encoding="utf-8",
+        errors="ignore"
     )
 
-    answer = ask_ai(summary_question, tender_text)
+    summary = generate_tender_summary(tender_text)
 
     return {
         "status": "success",
         "filename": filename,
-        "summary": answer
+        "summary": summary,
     }
 
 
-# ----------------------------------------------------
-# POST → Ask Questions About Tender
-# ----------------------------------------------------
-@router.post("/")
-def ask_assistant(request: AssistantRequest):
+# ======================================================
+# Procurement AI Chat
+# ======================================================
+
+@router.post("/ask")
+def ask_question(request: QuestionRequest):
     """
-    Answers questions related to the uploaded tender using Gemini AI.
+    Ask procurement-related questions about uploaded tender.
     """
 
     txt_path = UPLOAD_DIR / request.filename.replace(".pdf", ".txt")
 
+    print("\n========== GEMINI CHAT ==========")
+    print("Filename :", request.filename)
+    print("Question :", request.question)
+    print("OCR File :", txt_path)
+
     if not txt_path.exists():
         raise HTTPException(
             status_code=404,
-            detail="OCR text not found. Please extract OCR first."
+            detail="OCR text not found. Please run OCR first."
         )
 
-    tender_text = txt_path.read_text(encoding="utf-8")
+    tender_text = txt_path.read_text(
+        encoding="utf-8",
+        errors="ignore"
+    )
 
-    answer = ask_ai(request.question, tender_text)
+    answer = ask_tender_question(
+        tender_text,
+        request.question
+    )
 
     return {
         "status": "success",
         "filename": request.filename,
         "question": request.question,
-        "answer": answer
+        "answer": answer,
     }
