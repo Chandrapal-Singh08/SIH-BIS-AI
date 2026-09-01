@@ -2,30 +2,20 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pathlib import Path
 from dotenv import load_dotenv
 import os
 
 # ======================================================
-# Project Root Configuration
-# backend/app/main.py
+# Load Environment Variables
 # ======================================================
 
-# backend/
-BACKEND_DIR = Path(__file__).resolve().parent.parent
+load_dotenv()
 
-# SIH-BIS-AI/
-PROJECT_ROOT = BACKEND_DIR.parent
+# ======================================================
+# Shared Configuration
+# ======================================================
 
-# Load .env from backend/
-load_dotenv(BACKEND_DIR / ".env")
-
-# Shared folders (used by Upload, OCR, Validator, Recommendation, Report)
-UPLOAD_DIR = PROJECT_ROOT / "uploads"
-REPORT_DIR = PROJECT_ROOT / "reports"
-
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-REPORT_DIR.mkdir(parents=True, exist_ok=True)
+from app.config import UPLOAD_DIR, REPORT_DIR
 
 # ======================================================
 # FastAPI Application
@@ -38,17 +28,24 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration (Render + Vercel + Localhost)
+# CORS Configuration
 # ======================================================
 
 allowed_origins = [
+    # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://sih-bis-ai.vercel.app",
+
+    # Render Frontend
     "https://sih-bis-ai-frontend.onrender.com",
+
+    # Vercel Frontend
+    "https://sih-bis-ai.vercel.app",
 ]
 
+# Optional Frontend URL from Render Environment Variable
 FRONTEND_URL = os.getenv("FRONTEND_URL")
+
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
 
@@ -62,14 +59,14 @@ app.add_middleware(
 )
 
 # ======================================================
-# Static Files
+# Static File Serving
 # ======================================================
 
 app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.mount("/reports", StaticFiles(directory=str(REPORT_DIR)), name="reports")
 
 # ======================================================
-# Import Routers
+# Import API Routers
 # ======================================================
 
 from api.upload import router as upload_router
@@ -119,7 +116,6 @@ def health():
     }
 
 
-# Render sends HEAD requests for health checks
 @app.head("/", include_in_schema=False)
 def head_root():
     return {}
@@ -130,19 +126,16 @@ def head_health():
     return {}
 
 # ======================================================
-# PDF Preview Endpoint
-# Used by React PDF Review Page
+# Serve Uploaded Tender PDF (Review Page)
 # ======================================================
 
 @app.get("/pdf/{filename:path}", tags=["PDF Preview"])
 def serve_pdf(filename: str):
-    file_path = UPLOAD_DIR / filename
+    """
+    Preview uploaded tender PDF in the frontend.
+    """
 
-    print("\n========== PDF PREVIEW ==========")
-    print("Filename :", filename)
-    print("Path     :", file_path)
-    print("Exists   :", file_path.exists())
-    print("================================\n")
+    file_path = UPLOAD_DIR / filename
 
     if not file_path.exists():
         raise HTTPException(
