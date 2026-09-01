@@ -41,86 +41,124 @@ export default function UploadPage() {
   const [step, setStep] = useState("");
   const [progress, setProgress] = useState(0);
 
-  // ---------------- File Selection ----------------
+  // -------------------------------------------------
+  // File Selection
+  // -------------------------------------------------
 
-  const handleFileChange = (event) => {
-    const selected = event.target.files?.[0];
+  const handleFileChange = (e) => {
+    const selected = e.target.files?.[0];
 
     if (!selected) return;
 
     if (selected.type !== "application/pdf") {
-      toast.error("Please upload a PDF file only.");
+      toast.error("Only PDF files are allowed.");
       return;
     }
 
     resetTender();
     setFile(selected);
-    toast.success("Tender PDF selected.");
+
+    toast.success("Tender selected successfully.");
   };
 
-  // ---------------- Full AI Pipeline ----------------
+  // -------------------------------------------------
+  // Complete AI Pipeline
+  // -------------------------------------------------
 
   const handleAnalyze = async () => {
     if (!file) {
-      toast.error("Please choose a PDF first.");
+      toast.error("Please select a tender PDF.");
       return;
     }
 
-    try {
-      setLoading(true);
+    setLoading(true);
+    setProgress(5);
 
-      // Upload
+    try {
+      // =================================================
+      // STEP 1 — Upload
+      // =================================================
+
       setStep("Uploading Tender...");
       setProgress(15);
 
       const upload = await uploadTender(file);
 
-      setFilename(upload.filename);
+      const uploadedFilename = upload.filename;
+
+      if (!uploadedFilename) {
+        throw new Error("Backend did not return filename.");
+      }
+
+      // Save UUID filename immediately
+      setFilename(uploadedFilename);
       setOriginalFilename(upload.original_filename);
 
-      toast.success("Tender uploaded successfully.");
+      console.log("Uploaded Filename:", uploadedFilename);
 
-      // OCR
+      toast.success("Tender uploaded.");
+
+      // =================================================
+      // STEP 2 — OCR
+      // =================================================
+
       setStep("Extracting OCR...");
       setProgress(35);
 
-      const ocr = await extractOCR(upload.filename);
+      const ocr = await extractOCR(uploadedFilename);
 
-      setOCRPreview(ocr.preview);
-      setOCRMethod(ocr.method);
+      setOCRPreview(ocr.preview || "");
+      setOCRMethod(ocr.method || "");
 
-      toast.success(`OCR completed using ${ocr.method}.`);
+      toast.success(`OCR completed (${ocr.method}).`);
 
-      // Validation
-      setStep("Validating BIS Clauses...");
+      // =================================================
+      // STEP 3 — BIS Validation
+      // =================================================
+
+      setStep("Checking BIS Compliance...");
       setProgress(65);
 
-      const validation = await validateTender(upload.filename);
+      const validation = await validateTender(uploadedFilename);
 
-      setComplianceScore(validation.score);
-      setRiskLevel(validation.risk_level);
-      setMatchedClauses(validation.matched_details);
-      setMissingClauses(validation.missing_clauses);
-      setSummary(validation.summary);
+      setComplianceScore(validation.score || 0);
+      setRiskLevel(validation.risk_level || "UNKNOWN");
+      setMatchedClauses(validation.matched_details || []);
+      setMissingClauses(validation.missing_clauses || []);
+      setSummary(validation.summary || "");
 
       toast.success(`Compliance Score: ${validation.score}%`);
 
-      // AI Recommendation
+      // =================================================
+      // STEP 4 — AI Recommendations
+      // =================================================
+
       setStep("Generating AI Recommendations...");
       setProgress(90);
 
-      const recommendation = await getRecommendations(upload.filename);
+      const recommendation = await getRecommendations(uploadedFilename);
 
-      setProductCategory(recommendation.product_category);
-      setRecommendations(recommendation.recommended_standards);
+      setProductCategory(recommendation.product_category || "");
+      setRecommendations(recommendation.recommended_standards || []);
 
-      setStep("Completed");
+      // =================================================
+      // DONE
+      // =================================================
+
       setProgress(100);
+      setStep("Completed");
 
-      toast.success("AI Recommendation Engine completed.");
-    } catch (error) {
-      console.error(error);
-      toast.error("Analysis failed. Check backend server.");
+      toast.success("Tender analyzed successfully.");
+    } catch (err) {
+      console.error(err);
+
+      const message =
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Analysis failed.";
+
+      toast.error(message);
+
       setProgress(0);
       setStep("");
     } finally {
@@ -128,7 +166,9 @@ export default function UploadPage() {
     }
   };
 
-  // ---------------- Workflow Cards ----------------
+  // -------------------------------------------------
+  // Workflow Cards
+  // -------------------------------------------------
 
   const workflow = [
     {
@@ -160,6 +200,7 @@ export default function UploadPage() {
       animate={{ opacity: 1 }}
     >
       {/* Hero */}
+
       <div className="rounded-3xl bg-gradient-to-r from-[#003366] via-[#0055AA] to-[#0080D5] p-8 text-white shadow-xl">
         <p className="uppercase tracking-widest text-blue-200 text-sm">
           Bureau of Indian Standards
@@ -170,23 +211,24 @@ export default function UploadPage() {
         </h1>
 
         <p className="mt-4 max-w-3xl text-blue-100 leading-7">
-          Upload a procurement tender and let the AI Engine automatically perform
-          OCR extraction, BIS compliance validation, AI recommendation generation,
-          and prepare a downloadable compliance report.
+          Upload a government procurement tender and let AI automatically
+          perform OCR extraction, BIS validation, semantic BIS recommendation,
+          and compliance report generation.
         </p>
       </div>
 
-      {/* Upload Card */}
+      {/* Upload Section */}
+
       <div className="bg-white rounded-3xl shadow-lg border-2 border-dashed border-blue-300 p-10">
         <div className="flex flex-col items-center text-center">
           <UploadCloud size={70} className="text-[#003366] mb-4" />
 
           <h2 className="text-2xl font-bold text-gray-800">
-            Drag & Drop Tender PDF
+            Upload Tender PDF
           </h2>
 
           <p className="text-gray-500 mt-2">
-            Only Government Tender PDF files are supported.
+            Government Tender PDF (Digital or Scanned)
           </p>
 
           <input
@@ -198,7 +240,7 @@ export default function UploadPage() {
 
           {file && (
             <motion.div
-              initial={{ scale: 0.9 }}
+              initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               className="mt-6 bg-blue-50 border border-blue-200 rounded-2xl p-5 w-full max-w-xl"
             >
@@ -220,7 +262,7 @@ export default function UploadPage() {
 
           <button
             onClick={handleAnalyze}
-            disabled={loading}
+            disabled={loading || !file}
             className="mt-8 bg-[#003366] hover:bg-[#002244] disabled:bg-gray-400 text-white px-8 py-4 rounded-xl font-semibold flex items-center gap-3 transition"
           >
             {loading ? (
@@ -237,6 +279,7 @@ export default function UploadPage() {
           </button>
 
           {/* Progress */}
+
           {loading && (
             <div className="mt-8 w-full max-w-xl">
               <div className="flex justify-between text-sm mb-2">
@@ -247,7 +290,6 @@ export default function UploadPage() {
               <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-gradient-to-r from-green-500 to-blue-600"
-                  initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                 />
               </div>
@@ -257,7 +299,6 @@ export default function UploadPage() {
           {progress === 100 && (
             <div className="mt-8 bg-green-50 border border-green-300 rounded-xl px-6 py-4 flex items-center gap-3 text-green-700">
               <CheckCircle2 size={24} />
-
               <span className="font-semibold">
                 Tender analyzed successfully.
               </span>
@@ -267,6 +308,7 @@ export default function UploadPage() {
       </div>
 
       {/* Workflow */}
+
       <div className="bg-white rounded-3xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-[#003366] mb-6">
           AI Processing Workflow
@@ -279,9 +321,9 @@ export default function UploadPage() {
             return (
               <div
                 key={item.title}
-                className={`rounded-2xl border p-6 text-center transition-all ${
+                className={`rounded-2xl border p-6 text-center transition ${
                   item.active
-                    ? "bg-green-50 border-green-400 shadow"
+                    ? "bg-green-50 border-green-400"
                     : "bg-gray-50 border-gray-200"
                 }`}
               >
@@ -303,31 +345,32 @@ export default function UploadPage() {
         </div>
       </div>
 
-      {/* Information */}
+      {/* Info */}
+
       <div className="bg-blue-50 border border-blue-200 rounded-3xl p-8">
         <h2 className="text-2xl font-bold text-[#003366] mb-5">
-          What happens after upload?
+          AI Tender Processing Pipeline
         </h2>
 
         <div className="grid md:grid-cols-2 gap-5 text-gray-700">
           <div className="flex gap-3">
             <UploadCloud className="text-blue-700 mt-1" />
-            <p>PDF is securely uploaded to the FastAPI backend.</p>
+            <p>Secure PDF upload to FastAPI backend.</p>
           </div>
 
           <div className="flex gap-3">
             <ScanSearch className="text-blue-700 mt-1" />
-            <p>OCR extracts embedded or scanned text using PyMuPDF and Tesseract.</p>
+            <p>OCR extraction using PyMuPDF with Tesseract fallback.</p>
           </div>
 
           <div className="flex gap-3">
             <ShieldCheck className="text-blue-700 mt-1" />
-            <p>Validator checks mandatory BIS clauses like IP66, Warranty, Surge Protection, etc.</p>
+            <p>BIS compliance validation against mandatory tender clauses.</p>
           </div>
 
           <div className="flex gap-3">
             <Sparkles className="text-blue-700 mt-1" />
-            <p>AI Recommendation Engine identifies applicable BIS standards using PostgreSQL + RAG.</p>
+            <p>AI-powered BIS standard recommendations using RAG + PostgreSQL.</p>
           </div>
         </div>
       </div>

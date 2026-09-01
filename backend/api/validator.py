@@ -6,17 +6,16 @@ router = APIRouter(
     tags=["Validator"]
 )
 
-# ----------------------------------------------------------
-# OCR Text Directory
-# ----------------------------------------------------------
+# ======================================================
+# Upload Directory (backend/uploads)
+# ======================================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-OCR_DIR = BASE_DIR / "uploads"
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = BASE_DIR / "uploads"
 
-# ----------------------------------------------------------
+# ======================================================
 # Mandatory BIS Clauses (LED Street Light - IS 10322)
-# Coordinates are used for PDF highlighting in React.
-# ----------------------------------------------------------
+# ======================================================
 
 MANDATORY_CLAUSES = [
     {
@@ -46,13 +45,7 @@ MANDATORY_CLAUSES = [
     {
         "label": "Voltage Range",
         "expected": "140–270 VAC",
-        "keywords": [
-            "140 to 270",
-            "140-270",
-            "140 270",
-            "voltage range",
-            "270 volts",
-        ],
+        "keywords": ["140 to 270", "140-270", "140 270", "voltage range"],
         "page": 1,
         "top": 48,
         "left": 18,
@@ -83,30 +76,21 @@ MANDATORY_CLAUSES = [
     },
 ]
 
-# ----------------------------------------------------------
-# Validate Tender Against BIS Clauses
-# ----------------------------------------------------------
+# ======================================================
+# Validation Endpoint
+# ======================================================
 
 @router.get("/")
 def validate_document(filename: str):
     """
-    Validate OCR extracted tender against mandatory BIS clauses.
-
-    Returns:
-    - Compliance Score
-    - Risk Level
-    - Matched Clauses
-    - Missing Clauses
-    - PDF Highlight Coordinates
-    - AI Recommendations
+    Validate OCR extracted tender against BIS mandatory clauses.
     """
 
-    # OCR TXT file
-    ocr_file = OCR_DIR / filename.replace(".pdf", ".txt")
+    txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
 
-    print(f"[Validator] OCR File: {ocr_file}")
+    print(f"[Validator] OCR File: {txt_path}")
 
-    if not ocr_file.exists():
+    if not txt_path.exists():
         return {
             "score": 0,
             "risk_level": "HIGH",
@@ -114,18 +98,16 @@ def validate_document(filename: str):
             "total_clauses": len(MANDATORY_CLAUSES),
             "matched_details": [],
             "missing_clauses": [],
-            "summary": "OCR file not found. Please extract OCR first."
+            "summary": "OCR file not found. Please extract OCR first.",
         }
 
-    # Read OCR Text
-    text = ocr_file.read_text(encoding="utf-8").lower()
+    text = txt_path.read_text(
+        encoding="utf-8",
+        errors="ignore"
+    ).lower()
 
     matched = []
     missing = []
-
-    # ------------------------------------------------------
-    # Clause Matching
-    # ------------------------------------------------------
 
     for clause in MANDATORY_CLAUSES:
 
@@ -141,27 +123,15 @@ def validate_document(filename: str):
 
         if found:
             clause_result["status"] = "COMPLIANT"
-
             clause_result["recommendation"] = "No changes required."
-
             matched.append(clause_result)
-
         else:
             clause_result["status"] = "NON-COMPLIANT"
-
-            clause_result[
-                "recommendation"
-            ] = (
-                f"Add or update the tender to include "
-                f"{clause['label']} = {clause['expected']} "
-                f"according to BIS IS 10322."
+            clause_result["recommendation"] = (
+                f"Include {clause['label']} = {clause['expected']} "
+                "as per BIS IS 10322."
             )
-
             missing.append(clause_result)
-
-    # ------------------------------------------------------
-    # Compliance Score
-    # ------------------------------------------------------
 
     total = len(MANDATORY_CLAUSES)
     score = round((len(matched) / total) * 100)
@@ -174,14 +144,9 @@ def validate_document(filename: str):
         risk_level = "HIGH"
 
     summary = (
-        f"Tender satisfies {len(matched)} out of {total} "
-        f"mandatory BIS clauses. "
-        f"{len(missing)} clauses require attention before publishing."
+        f"Tender satisfies {len(matched)} of {total} mandatory BIS clauses. "
+        f"{len(missing)} clause(s) need correction."
     )
-
-    # ------------------------------------------------------
-    # Final Response
-    # ------------------------------------------------------
 
     return {
         "score": score,

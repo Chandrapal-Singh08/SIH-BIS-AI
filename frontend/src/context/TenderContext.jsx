@@ -1,67 +1,199 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const TenderContext = createContext(null);
 
 export function TenderProvider({ children }) {
-  /* ==========================================
-      1. Uploaded Tender Information
-  ========================================== */
-  const [filename, setFilename] = useState("");
-  const [originalFilename, setOriginalFilename] = useState("");
+  // =====================================================
+  // Upload Information
+  // =====================================================
 
-  /* ==========================================
-      2. OCR Extraction
-  ========================================== */
-  const [ocrPreview, setOCRPreview] = useState("");
-  const [ocrMethod, setOCRMethod] = useState("");
+  const [filename, setFilenameState] = useState(
+    localStorage.getItem("uploadedTender") || ""
+  );
 
-  /* ==========================================
-      3. BIS Validation
-  ========================================== */
-  const [complianceScore, setComplianceScore] = useState(0);
-  const [riskLevel, setRiskLevel] = useState("HIGH");
-  const [matchedClauses, setMatchedClauses] = useState([]);
-  const [missingClauses, setMissingClauses] = useState([]);
-  const [summary, setSummary] = useState("");
+  const [originalFilename, setOriginalFilenameState] = useState(
+    localStorage.getItem("originalTender") || ""
+  );
 
-  /* ==========================================
-      4. AI Recommendation Engine
-  ========================================== */
-  const [productCategory, setProductCategory] = useState("");
-  const [recommendations, setRecommendations] = useState([]);
+  // =====================================================
+  // OCR
+  // =====================================================
 
-  /* ==========================================
-      5. Gemini AI Assistant
-  ========================================== */
-  const [aiSummary, setAISummary] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
+  const [ocrPreview, setOCRPreviewState] = useState(
+    localStorage.getItem("ocrPreview") || ""
+  );
 
-  /* ==========================================
-      6. Reset Everything (New Tender Upload)
-  ========================================== */
-  const resetTender = () => {
-    setFilename("");
-    setOriginalFilename("");
+  const [ocrMethod, setOCRMethodState] = useState(
+    localStorage.getItem("ocrMethod") || ""
+  );
 
-    setOCRPreview("");
-    setOCRMethod("");
+  // =====================================================
+  // Validation
+  // =====================================================
 
-    setComplianceScore(0);
-    setRiskLevel("HIGH");
-    setMatchedClauses([]);
-    setMissingClauses([]);
-    setSummary("");
+  const [complianceScore, setComplianceScoreState] = useState(
+    Number(localStorage.getItem("complianceScore")) || 0
+  );
 
-    setProductCategory("");
-    setRecommendations([]);
+  const [riskLevel, setRiskLevelState] = useState(
+    localStorage.getItem("riskLevel") || "HIGH"
+  );
 
-    setAISummary("");
-    setChatHistory([]);
+  const [matchedClauses, setMatchedClausesState] = useState(() => {
+    const data = localStorage.getItem("matchedClauses");
+    return data ? JSON.parse(data) : [];
+  });
+
+  const [missingClauses, setMissingClausesState] = useState(() => {
+    const data = localStorage.getItem("missingClauses");
+    return data ? JSON.parse(data) : [];
+  });
+
+  const [summary, setSummaryState] = useState(
+    localStorage.getItem("summary") || ""
+  );
+
+  // =====================================================
+  // AI Recommendation Engine
+  // =====================================================
+
+  const [productCategory, setProductCategoryState] = useState(
+    localStorage.getItem("productCategory") || ""
+  );
+
+  const [recommendations, setRecommendationsState] = useState(() => {
+    const data = localStorage.getItem("recommendations");
+    return data ? JSON.parse(data) : [];
+  });
+
+  // =====================================================
+  // Gemini AI Assistant
+  // =====================================================
+
+  const [aiSummary, setAISummaryState] = useState(
+    localStorage.getItem("aiSummary") || ""
+  );
+
+  const [chatHistory, setChatHistoryState] = useState(() => {
+    const data = localStorage.getItem("chatHistory");
+    return data ? JSON.parse(data) : [];
+  });
+
+  // =====================================================
+  // Setter Functions (Save to LocalStorage)
+  // =====================================================
+
+  const setFilename = (value) => {
+    localStorage.setItem("uploadedTender", value);
+    setFilenameState(value);
   };
 
-  /* ==========================================
-      Context Provider
-  ========================================== */
+  const setOriginalFilename = (value) => {
+    localStorage.setItem("originalTender", value);
+    setOriginalFilenameState(value);
+  };
+
+  const setOCRPreview = (value) => {
+    localStorage.setItem("ocrPreview", value);
+    setOCRPreviewState(value);
+  };
+
+  const setOCRMethod = (value) => {
+    localStorage.setItem("ocrMethod", value);
+    setOCRMethodState(value);
+  };
+
+  const setComplianceScore = (value) => {
+    localStorage.setItem("complianceScore", value);
+    setComplianceScoreState(value);
+  };
+
+  const setRiskLevel = (value) => {
+    localStorage.setItem("riskLevel", value);
+    setRiskLevelState(value);
+  };
+
+  const setMatchedClauses = (value) => {
+    localStorage.setItem("matchedClauses", JSON.stringify(value));
+    setMatchedClausesState(value);
+  };
+
+  const setMissingClauses = (value) => {
+    localStorage.setItem("missingClauses", JSON.stringify(value));
+    setMissingClausesState(value);
+  };
+
+  const setSummary = (value) => {
+    localStorage.setItem("summary", value);
+    setSummaryState(value);
+  };
+
+  const setProductCategory = (value) => {
+    localStorage.setItem("productCategory", value);
+    setProductCategoryState(value);
+  };
+
+  const setRecommendations = (value) => {
+    localStorage.setItem("recommendations", JSON.stringify(value));
+    setRecommendationsState(value);
+  };
+
+  const setAISummary = (value) => {
+    localStorage.setItem("aiSummary", value);
+    setAISummaryState(value);
+  };
+
+  const setChatHistory = (value) => {
+    localStorage.setItem("chatHistory", JSON.stringify(value));
+    setChatHistoryState(value);
+  };
+
+  // =====================================================
+  // Clear Everything
+  // =====================================================
+
+  const resetTender = () => {
+    localStorage.removeItem("uploadedTender");
+    localStorage.removeItem("originalTender");
+    localStorage.removeItem("ocrPreview");
+    localStorage.removeItem("ocrMethod");
+    localStorage.removeItem("complianceScore");
+    localStorage.removeItem("riskLevel");
+    localStorage.removeItem("matchedClauses");
+    localStorage.removeItem("missingClauses");
+    localStorage.removeItem("summary");
+    localStorage.removeItem("productCategory");
+    localStorage.removeItem("recommendations");
+    localStorage.removeItem("aiSummary");
+    localStorage.removeItem("chatHistory");
+
+    setFilenameState("");
+    setOriginalFilenameState("");
+    setOCRPreviewState("");
+    setOCRMethodState("");
+    setComplianceScoreState(0);
+    setRiskLevelState("HIGH");
+    setMatchedClausesState([]);
+    setMissingClausesState([]);
+    setSummaryState("");
+    setProductCategoryState("");
+    setRecommendationsState([]);
+    setAISummaryState("");
+    setChatHistoryState([]);
+  };
+
+  // =====================================================
+  // Keep LocalStorage Updated
+  // =====================================================
+
+  useEffect(() => {
+    localStorage.setItem("uploadedTender", filename);
+  }, [filename]);
+
+  // =====================================================
+  // Context Provider
+  // =====================================================
+
   return (
     <TenderContext.Provider
       value={{
@@ -110,9 +242,10 @@ export function TenderProvider({ children }) {
   );
 }
 
-/* ==========================================
-    Custom Hook
-========================================== */
+// =====================================================
+// Custom Hook
+// =====================================================
+
 export function useTender() {
   const context = useContext(TenderContext);
 

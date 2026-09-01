@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # ======================================================
-# Directories (backend/uploads & backend/reports)
+# Upload & Report Directories
 # ======================================================
 
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -34,7 +34,7 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration (Local + Render + Vercel)
+# CORS Configuration
 # ======================================================
 
 allowed_origins = [
@@ -42,21 +42,20 @@ allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 
-    # Render Frontend
-    "https://sih-bis-ai-frontend.onrender.com",
-
     # Vercel Frontend
     "https://sih-bis-ai.vercel.app",
+
+    # Render Frontend
+    "https://sih-bis-ai-frontend.onrender.com",
 ]
 
-# Optional custom frontend URL from Render Environment Variable
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL and FRONTEND_URL not in allowed_origins:
     allowed_origins.append(FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=list(set(allowed_origins)),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -64,7 +63,7 @@ app.add_middleware(
 )
 
 # ======================================================
-# Static File Mounts
+# Static Files
 # ======================================================
 
 app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
@@ -74,24 +73,24 @@ app.mount("/reports", StaticFiles(directory=str(REPORT_DIR)), name="reports")
 # Import Routers
 # ======================================================
 
-from api.standards import router as standards_router
 from api.upload import router as upload_router
 from api.ocr import router as ocr_router
 from api.validator import router as validator_router
 from api.recommend import router as recommend_router
 from api.assistant import router as assistant_router
+from api.standards import router as standards_router
 from reporting.report_api import router as report_router
 
 # ======================================================
 # Register Routers
 # ======================================================
 
-app.include_router(standards_router)
 app.include_router(upload_router)
 app.include_router(ocr_router)
 app.include_router(validator_router)
 app.include_router(recommend_router)
 app.include_router(assistant_router)
+app.include_router(standards_router)
 app.include_router(report_router)
 
 # ======================================================
@@ -107,14 +106,6 @@ def root():
         "deployment": "Render",
         "frontend": "https://sih-bis-ai-frontend.onrender.com",
         "message": "Backend API is running successfully 🚀",
-        "modules": [
-            "Upload PDF",
-            "OCR Extraction",
-            "BIS Validator",
-            "AI Recommendation Engine",
-            "Compliance Report Generator",
-            "Gemini AI Assistant",
-        ],
     }
 
 # ======================================================
@@ -129,8 +120,7 @@ def health():
     }
 
 # ======================================================
-# Render HEAD Request Fix
-# Prevents Render health checks from returning 405
+# HEAD Endpoints (Prevents Render 405 Restart Issue)
 # ======================================================
 
 @app.head("/", include_in_schema=False)
@@ -142,23 +132,24 @@ def head_health():
     return {}
 
 # ======================================================
-# PDF Viewer Endpoint
-# Used by Review Page
+# Serve Uploaded Tender PDF
+# Used by React Review Page
 # ======================================================
 
 @app.get("/pdf/{filename}", tags=["PDF"])
 def serve_pdf(filename: str):
+    pdf_path = UPLOAD_DIR / filename
 
-    file_path = UPLOAD_DIR / filename
+    print(f"[PDF] Requested: {pdf_path}")
 
-    if not file_path.exists():
+    if not pdf_path.exists():
         raise HTTPException(
             status_code=404,
             detail="PDF not found."
         )
 
     return FileResponse(
-        path=str(file_path),
+        path=str(pdf_path),
         media_type="application/pdf",
         filename=filename,
     )
