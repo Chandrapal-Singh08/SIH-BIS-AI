@@ -7,18 +7,22 @@ from dotenv import load_dotenv
 import os
 
 # ======================================================
-# Load Environment Variables
+# Project Root Configuration
+# backend/app/main.py
 # ======================================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+# backend/
+BACKEND_DIR = Path(__file__).resolve().parent.parent
 
-# ======================================================
-# Upload & Report Directories
-# ======================================================
+# SIH-BIS-AI/
+PROJECT_ROOT = BACKEND_DIR.parent
 
-UPLOAD_DIR = BASE_DIR / "uploads"
-REPORT_DIR = BASE_DIR / "reports"
+# Load .env from backend/
+load_dotenv(BACKEND_DIR / ".env")
+
+# Shared folders (used by Upload, OCR, Validator, Recommendation, Report)
+UPLOAD_DIR = PROJECT_ROOT / "uploads"
+REPORT_DIR = PROJECT_ROOT / "reports"
 
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -34,18 +38,13 @@ app = FastAPI(
 )
 
 # ======================================================
-# CORS Configuration
+# CORS Configuration (Render + Vercel + Localhost)
 # ======================================================
 
 allowed_origins = [
-    # Local Development
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-
-    # Vercel Frontend
     "https://sih-bis-ai.vercel.app",
-
-    # Render Frontend
     "https://sih-bis-ai-frontend.onrender.com",
 ]
 
@@ -94,7 +93,7 @@ app.include_router(standards_router)
 app.include_router(report_router)
 
 # ======================================================
-# Root Endpoint
+# Health Endpoints
 # ======================================================
 
 @app.get("/", tags=["Health"])
@@ -105,12 +104,12 @@ def root():
         "version": "1.0.0",
         "deployment": "Render",
         "frontend": "https://sih-bis-ai-frontend.onrender.com",
-        "message": "Backend API is running successfully 🚀",
+        "uploads_directory": str(UPLOAD_DIR),
+        "reports_directory": str(REPORT_DIR),
+        "uploads_exists": UPLOAD_DIR.exists(),
+        "reports_exists": REPORT_DIR.exists(),
     }
 
-# ======================================================
-# Health Check Endpoint (Render)
-# ======================================================
 
 @app.get("/health", tags=["Health"])
 def health():
@@ -119,37 +118,40 @@ def health():
         "service": "AI Powered BIS Tender Compliance Engine",
     }
 
-# ======================================================
-# HEAD Endpoints (Prevents Render 405 Restart Issue)
-# ======================================================
 
+# Render sends HEAD requests for health checks
 @app.head("/", include_in_schema=False)
 def head_root():
     return {}
+
 
 @app.head("/health", include_in_schema=False)
 def head_health():
     return {}
 
 # ======================================================
-# Serve Uploaded Tender PDF
-# Used by React Review Page
+# PDF Preview Endpoint
+# Used by React PDF Review Page
 # ======================================================
 
-@app.get("/pdf/{filename}", tags=["PDF"])
+@app.get("/pdf/{filename:path}", tags=["PDF Preview"])
 def serve_pdf(filename: str):
-    pdf_path = UPLOAD_DIR / filename
+    file_path = UPLOAD_DIR / filename
 
-    print(f"[PDF] Requested: {pdf_path}")
+    print("\n========== PDF PREVIEW ==========")
+    print("Filename :", filename)
+    print("Path     :", file_path)
+    print("Exists   :", file_path.exists())
+    print("================================\n")
 
-    if not pdf_path.exists():
+    if not file_path.exists():
         raise HTTPException(
             status_code=404,
             detail="PDF not found."
         )
 
     return FileResponse(
-        path=str(pdf_path),
+        path=file_path,
         media_type="application/pdf",
         filename=filename,
     )
