@@ -4,29 +4,20 @@ import shutil
 import uuid
 import re
 
-router = APIRouter(
-    prefix="/upload",
-    tags=["Tender Upload"]
-)
+router = APIRouter(prefix="/upload", tags=["Upload"])
 
-# -------------------------------------------------------
-# backend/uploads
-# -------------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def sanitize_filename(filename: str):
-    """Remove spaces and special characters."""
-    name = Path(filename).stem
-    ext = Path(filename).suffix.lower()
-
-    name = name.replace(" ", "_")
-    name = re.sub(r"[()]", "", name)
-    name = re.sub(r"[^a-zA-Z0-9_.-]", "", name)
-
-    return f"{name}{ext}"
+def clean_filename(filename: str):
+    filename = filename.strip()
+    filename = filename.replace(" ", "_")
+    filename = filename.replace("(", "")
+    filename = filename.replace(")", "")
+    filename = re.sub(r"[^A-Za-z0-9._-]", "_", filename)
+    return filename
 
 
 @router.post("/")
@@ -34,19 +25,17 @@ async def upload_pdf(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
         raise HTTPException(400, "Only PDF files are allowed.")
 
-    safe_name = sanitize_filename(file.filename)
-    unique_filename = f"{uuid.uuid4()}_{safe_name}"
+    cleaned = clean_filename(file.filename)
+    unique_filename = f"{uuid.uuid4()}_{cleaned}"
 
     file_path = UPLOAD_DIR / unique_filename
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    print(f"[UPLOAD] Saved PDF: {file_path}")
-
     return {
         "status": "success",
         "filename": unique_filename,
-        "original_filename": file.filename,
-        "size_bytes": file_path.stat().st_size,
+        "original_filename": cleaned,
+        "size_bytes": file_path.stat().st_size
     }
