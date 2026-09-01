@@ -1,215 +1,96 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const TenderContext = createContext(null);
 
+// Safe JSON parser
+const safeParse = (key, defaultValue) => {
+  try {
+    const value = localStorage.getItem(key);
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === "undefined" ||
+      value === "null"
+    ) {
+      return defaultValue;
+    }
+
+    return JSON.parse(value);
+  } catch {
+    return defaultValue;
+  }
+};
+
 export function TenderProvider({ children }) {
-  // =====================================================
-  // Upload Information
-  // =====================================================
-
-  const [filename, setFilenameState] = useState(
-    localStorage.getItem("uploadedTender") || ""
+  // Upload
+  const [filename, setFilename] = useState(
+    localStorage.getItem("filename") || ""
   );
 
-  const [originalFilename, setOriginalFilenameState] = useState(
-    localStorage.getItem("originalTender") || ""
+  const [originalFilename, setOriginalFilename] = useState(
+    localStorage.getItem("originalFilename") || ""
   );
 
-  // =====================================================
   // OCR
-  // =====================================================
+  const [ocrPreview, setOCRPreview] = useState("");
+  const [ocrMethod, setOCRMethod] = useState("");
 
-  const [ocrPreview, setOCRPreviewState] = useState(
-    localStorage.getItem("ocrPreview") || ""
-  );
-
-  const [ocrMethod, setOCRMethodState] = useState(
-    localStorage.getItem("ocrMethod") || ""
-  );
-
-  // =====================================================
   // Validation
-  // =====================================================
+  const [complianceScore, setComplianceScore] = useState(0);
+  const [riskLevel, setRiskLevel] = useState("HIGH");
 
-  const [complianceScore, setComplianceScoreState] = useState(
-    Number(localStorage.getItem("complianceScore")) || 0
+  const [matchedClauses, setMatchedClauses] = useState(
+    safeParse("matchedClauses", [])
   );
 
-  const [riskLevel, setRiskLevelState] = useState(
-    localStorage.getItem("riskLevel") || "HIGH"
+  const [missingClauses, setMissingClauses] = useState(
+    safeParse("missingClauses", [])
   );
 
-  const [matchedClauses, setMatchedClausesState] = useState(() => {
-    const data = localStorage.getItem("matchedClauses");
-    return data ? JSON.parse(data) : [];
-  });
+  const [summary, setSummary] = useState("");
 
-  const [missingClauses, setMissingClausesState] = useState(() => {
-    const data = localStorage.getItem("missingClauses");
-    return data ? JSON.parse(data) : [];
-  });
-
-  const [summary, setSummaryState] = useState(
-    localStorage.getItem("summary") || ""
+  // Recommendations
+  const [productCategory, setProductCategory] = useState("");
+  const [recommendations, setRecommendations] = useState(
+    safeParse("recommendations", [])
   );
 
-  // =====================================================
-  // AI Recommendation Engine
-  // =====================================================
-
-  const [productCategory, setProductCategoryState] = useState(
-    localStorage.getItem("productCategory") || ""
+  // AI Assistant
+  const [aiSummary, setAISummary] = useState("");
+  const [chatHistory, setChatHistory] = useState(
+    safeParse("chatHistory", [])
   );
-
-  const [recommendations, setRecommendationsState] = useState(() => {
-    const data = localStorage.getItem("recommendations");
-    return data ? JSON.parse(data) : [];
-  });
-
-  // =====================================================
-  // Gemini AI Assistant
-  // =====================================================
-
-  const [aiSummary, setAISummaryState] = useState(
-    localStorage.getItem("aiSummary") || ""
-  );
-
-  const [chatHistory, setChatHistoryState] = useState(() => {
-    const data = localStorage.getItem("chatHistory");
-    return data ? JSON.parse(data) : [];
-  });
-
-  // =====================================================
-  // Setter Functions (Save to LocalStorage)
-  // =====================================================
-
-  const setFilename = (value) => {
-    localStorage.setItem("uploadedTender", value);
-    setFilenameState(value);
-  };
-
-  const setOriginalFilename = (value) => {
-    localStorage.setItem("originalTender", value);
-    setOriginalFilenameState(value);
-  };
-
-  const setOCRPreview = (value) => {
-    localStorage.setItem("ocrPreview", value);
-    setOCRPreviewState(value);
-  };
-
-  const setOCRMethod = (value) => {
-    localStorage.setItem("ocrMethod", value);
-    setOCRMethodState(value);
-  };
-
-  const setComplianceScore = (value) => {
-    localStorage.setItem("complianceScore", value);
-    setComplianceScoreState(value);
-  };
-
-  const setRiskLevel = (value) => {
-    localStorage.setItem("riskLevel", value);
-    setRiskLevelState(value);
-  };
-
-  const setMatchedClauses = (value) => {
-    localStorage.setItem("matchedClauses", JSON.stringify(value));
-    setMatchedClausesState(value);
-  };
-
-  const setMissingClauses = (value) => {
-    localStorage.setItem("missingClauses", JSON.stringify(value));
-    setMissingClausesState(value);
-  };
-
-  const setSummary = (value) => {
-    localStorage.setItem("summary", value);
-    setSummaryState(value);
-  };
-
-  const setProductCategory = (value) => {
-    localStorage.setItem("productCategory", value);
-    setProductCategoryState(value);
-  };
-
-  const setRecommendations = (value) => {
-    localStorage.setItem("recommendations", JSON.stringify(value));
-    setRecommendationsState(value);
-  };
-
-  const setAISummary = (value) => {
-    localStorage.setItem("aiSummary", value);
-    setAISummaryState(value);
-  };
-
-  const setChatHistory = (value) => {
-    localStorage.setItem("chatHistory", JSON.stringify(value));
-    setChatHistoryState(value);
-  };
-
-  // =====================================================
-  // Clear Everything
-  // =====================================================
 
   const resetTender = () => {
-    localStorage.removeItem("uploadedTender");
-    localStorage.removeItem("originalTender");
-    localStorage.removeItem("ocrPreview");
-    localStorage.removeItem("ocrMethod");
-    localStorage.removeItem("complianceScore");
-    localStorage.removeItem("riskLevel");
-    localStorage.removeItem("matchedClauses");
-    localStorage.removeItem("missingClauses");
-    localStorage.removeItem("summary");
-    localStorage.removeItem("productCategory");
-    localStorage.removeItem("recommendations");
-    localStorage.removeItem("aiSummary");
-    localStorage.removeItem("chatHistory");
+    setFilename("");
+    setOriginalFilename("");
+    setOCRPreview("");
+    setOCRMethod("");
+    setComplianceScore(0);
+    setRiskLevel("HIGH");
+    setMatchedClauses([]);
+    setMissingClauses([]);
+    setSummary("");
+    setProductCategory("");
+    setRecommendations([]);
+    setAISummary("");
+    setChatHistory([]);
 
-    setFilenameState("");
-    setOriginalFilenameState("");
-    setOCRPreviewState("");
-    setOCRMethodState("");
-    setComplianceScoreState(0);
-    setRiskLevelState("HIGH");
-    setMatchedClausesState([]);
-    setMissingClausesState([]);
-    setSummaryState("");
-    setProductCategoryState("");
-    setRecommendationsState([]);
-    setAISummaryState("");
-    setChatHistoryState([]);
+    localStorage.clear();
   };
-
-  // =====================================================
-  // Keep LocalStorage Updated
-  // =====================================================
-
-  useEffect(() => {
-    localStorage.setItem("uploadedTender", filename);
-  }, [filename]);
-
-  // =====================================================
-  // Context Provider
-  // =====================================================
 
   return (
     <TenderContext.Provider
       value={{
-        // Upload
         filename,
         setFilename,
         originalFilename,
         setOriginalFilename,
-
-        // OCR
         ocrPreview,
         setOCRPreview,
         ocrMethod,
         setOCRMethod,
-
-        // Validation
         complianceScore,
         setComplianceScore,
         riskLevel,
@@ -220,20 +101,14 @@ export function TenderProvider({ children }) {
         setMissingClauses,
         summary,
         setSummary,
-
-        // Recommendation Engine
         productCategory,
         setProductCategory,
         recommendations,
         setRecommendations,
-
-        // AI Assistant
         aiSummary,
         setAISummary,
         chatHistory,
         setChatHistory,
-
-        // Utility
         resetTender,
       }}
     >
@@ -241,10 +116,6 @@ export function TenderProvider({ children }) {
     </TenderContext.Provider>
   );
 }
-
-// =====================================================
-// Custom Hook
-// =====================================================
 
 export function useTender() {
   const context = useContext(TenderContext);
