@@ -1,8 +1,76 @@
-from sqlalchemy.orm import Session
-
-from database.connection import SessionLocal
-from database.models import Standard
+from fastapi import HTTPException
 from app.config import UPLOAD_DIR
+
+# =====================================================
+# BIS Standards Knowledge Base
+# =====================================================
+
+BIS_STANDARDS = {
+    "LED Street Lights": [
+        {
+            "standard": "IS 10322 (Part 5/Sec 3)",
+            "title": "Lighting for Roads and Public Spaces",
+            "reason": "Applicable to LED street lighting installations.",
+            "confidence": 98.5,
+        },
+        {
+            "standard": "IS 16107",
+            "title": "LED Modules for General Lighting",
+            "reason": "Specifies safety and performance of LED modules.",
+            "confidence": 95.2,
+        },
+        {
+            "standard": "IS 16108",
+            "title": "LED Luminaires Performance Requirements",
+            "reason": "Performance requirements for LED luminaires.",
+            "confidence": 93.4,
+        },
+        {
+            "standard": "IS 15885",
+            "title": "Safety of LED Control Gear",
+            "reason": "Safety requirements for LED drivers/control gear.",
+            "confidence": 90.8,
+        },
+        {
+            "standard": "IS 10322",
+            "title": "General Lighting Installation Guidelines",
+            "reason": "BIS lighting installation practices.",
+            "confidence": 89.1,
+        },
+    ],
+    "Ceiling Fan": [
+        {
+            "standard": "IS 374",
+            "title": "Ceiling Fan Specification",
+            "reason": "Applicable BIS standard for ceiling fans.",
+            "confidence": 97.0,
+        }
+    ],
+    "Solar PV Module": [
+        {
+            "standard": "IS 14286",
+            "title": "Crystalline Silicon PV Modules",
+            "reason": "Applicable BIS standard for PV modules.",
+            "confidence": 96.0,
+        }
+    ],
+    "Helmet": [
+        {
+            "standard": "IS 4151",
+            "title": "Protective Helmets for Two Wheeler Riders",
+            "reason": "Applicable BIS helmet standard.",
+            "confidence": 95.0,
+        }
+    ],
+    "Fire Extinguisher": [
+        {
+            "standard": "IS 15683",
+            "title": "Portable Fire Extinguishers",
+            "reason": "Applicable BIS fire extinguisher standard.",
+            "confidence": 96.0,
+        }
+    ],
+}
 
 # =====================================================
 # Product Detection
@@ -10,30 +78,18 @@ from app.config import UPLOAD_DIR
 
 PRODUCT_KEYWORDS = {
     "LED Street Lights": [
-        "led",
+        "led street light",
         "street light",
-        "luminaire",
+        "road light",
+        "led luminaire",
         "ip66",
         "surge protection",
         "lumen efficacy",
-        "road lighting",
     ],
-    "Ceiling Fan": [
-        "ceiling fan",
-        "blade sweep",
-        "fan motor",
-    ],
-    "Solar PV Module": [
-        "solar",
-        "pv module",
-        "photovoltaic",
-    ],
-    "Helmet": [
-        "helmet",
-    ],
-    "Fire Extinguisher": [
-        "fire extinguisher",
-    ],
+    "Ceiling Fan": ["ceiling fan", "blade sweep"],
+    "Solar PV Module": ["solar panel", "photovoltaic", "pv module"],
+    "Helmet": ["helmet"],
+    "Fire Extinguisher": ["fire extinguisher"],
 }
 
 
@@ -41,7 +97,7 @@ def identify_product(text: str):
     text = text.lower()
 
     for category, keywords in PRODUCT_KEYWORDS.items():
-        if any(k in text for k in keywords):
+        if any(word in text for word in keywords):
             return category
 
     return "Unknown Product"
@@ -54,61 +110,30 @@ def identify_product(text: str):
 def recommend_standards(filename: str):
     txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
 
+    print("\n========== RECOMMENDER ==========")
+    print("OCR File :", txt_path)
+    print("Exists   :", txt_path.exists())
+
     if not txt_path.exists():
-        return {
-            "product_category": "Unknown Product",
-            "recommended_standards": [],
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="OCR text not found. Run OCR first."
+        )
 
     tender_text = txt_path.read_text(
         encoding="utf-8",
-        errors="ignore",
-    ).lower()
+        errors="ignore"
+    )
 
-    product_category = identify_product(tender_text)
+    product = identify_product(tender_text)
 
-    db: Session = SessionLocal()
+    recommendations = BIS_STANDARDS.get(product, [])
 
-    try:
-        standards = db.query(Standard).all()
+    print("Product :", product)
+    print("Recommendations :", len(recommendations))
+    print("================================\n")
 
-        recommendations = []
-
-        for standard in standards:
-            searchable = (
-                f"{standard.standard_number} "
-                f"{standard.title} "
-                f"{standard.scope}"
-            ).lower()
-
-            score = 0
-
-            for keyword in PRODUCT_KEYWORDS.get(product_category, []):
-                if keyword in searchable or keyword in tender_text:
-                    score += 20
-
-            if standard.standard_number.lower() in tender_text:
-                score += 40
-
-            if score > 0:
-                recommendations.append(
-                    {
-                        "standard": standard.standard_number,
-                        "title": standard.title,
-                        "reason": f"Relevant for {product_category}.",
-                        "confidence": min(score, 100),
-                    }
-                )
-
-        recommendations.sort(
-            key=lambda x: x["confidence"],
-            reverse=True,
-        )
-
-        return {
-            "product_category": product_category,
-            "recommended_standards": recommendations[:5],
-        }
-
-    finally:
-        db.close()
+    return {
+        "product_category": product,
+        "recommended_standards": recommendations,
+    }
