@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import {
   Bot,
   Send,
   Loader2,
-  FileText,
-  User,
   Sparkles,
 } from "lucide-react";
 
-import { askAssistant, getAISummary } from "../services/api";
 import { useTender } from "../context/TenderContext";
+import {
+  getAISummary,
+  askAssistant,
+} from "../services/api";
 
 export default function AssistantPage() {
   const {
@@ -26,238 +26,170 @@ export default function AssistantPage() {
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
+  // ---------------- Summary ----------------
+
   useEffect(() => {
-    if (filename && !aiSummary) {
-      fetchSummary();
-    }
-  }, [filename]);
+    if (!filename) return;
 
-  const fetchSummary = async () => {
-    try {
-      setLoadingSummary(true);
+    const fetchSummary = async () => {
+      try {
+        setLoadingSummary(true);
 
-      const data = await getAISummary(filename);
+        const res = await getAISummary(filename);
 
-      setAISummary(data.summary || "AI summary unavailable.");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to generate AI summary.");
-    } finally {
-      setLoadingSummary(false);
-    }
-  };
-
-  const handleAsk = async () => {
-    if (!question.trim()) return;
-
-    const userMessage = {
-      role: "user",
-      text: question,
+        setAISummary(res.summary);
+      } catch (err) {
+        toast.error("Unable to generate AI summary.");
+      } finally {
+        setLoadingSummary(false);
+      }
     };
 
-    setChatHistory((prev) => [...prev, userMessage]);
+    if (!aiSummary) fetchSummary();
+  }, [filename]);
+
+  // ---------------- Chat ----------------
+
+  const handleAsk = async () => {
+    if (!filename) {
+      toast.error("Upload a tender first.");
+      return;
+    }
+
+    if (!question.trim()) return;
+
+    const userQuestion = question;
+
+    setChatHistory((prev) => [
+      ...prev,
+      { role: "user", message: userQuestion },
+    ]);
+
+    setQuestion("");
 
     try {
       setLoadingChat(true);
 
-      const response = await askAssistant(filename, question);
+      const res = await askAssistant(filename, userQuestion);
 
       setChatHistory((prev) => [
         ...prev,
         {
           role: "assistant",
-          text: response.answer,
+          message: res.answer,
         },
       ]);
-
-      setQuestion("");
-    } catch (err) {
-      console.error(err);
-
-      toast.error("Assistant failed to respond.");
-
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: "Unable to answer at the moment.",
-        },
-      ]);
+    } catch {
+      toast.error("Gemini AI Assistant failed.");
     } finally {
       setLoadingChat(false);
     }
   };
 
-  if (!filename) {
-    return (
-      <div className="bg-white rounded-3xl shadow-lg p-12 text-center">
-        <Bot size={60} className="mx-auto text-gray-400 mb-4" />
+  return (
+    <div className="space-y-8">
 
-        <h2 className="text-2xl font-bold text-gray-700">
-          AI Assistant is Ready
-        </h2>
+      <div className="bg-[#003366] text-white rounded-3xl p-8">
+        <div className="flex items-center gap-3">
+          <Bot size={34} />
+          <h1 className="text-3xl font-bold">
+            BIS AI Procurement Assistant
+          </h1>
+        </div>
 
-        <p className="text-gray-500 mt-2">
-          Upload and analyze a tender to start chatting with the BIS AI Assistant.
+        <p className="mt-3 text-blue-100">
+          Ask questions about uploaded tenders, BIS clauses,
+          standards, and compliance gaps.
         </p>
       </div>
-    );
-  }
 
-  return (
-    <motion.div
-      className="space-y-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      {/* Hero */}
+      <div className="bg-white rounded-3xl shadow p-8">
 
-      <div className="rounded-3xl bg-gradient-to-r from-[#003366] to-[#0055AA] text-white p-8 shadow-xl">
-        <div className="flex items-center gap-4">
-          <Bot size={42} />
-
-          <div>
-            <h1 className="text-4xl font-bold">
-              BIS AI Procurement Assistant
-            </h1>
-
-            <p className="mt-2 text-blue-100">
-              Ask questions about uploaded tenders, BIS clauses, standards, and compliance gaps.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Summary */}
-
-      <div className="bg-white rounded-3xl shadow-lg p-7">
         <div className="flex items-center gap-3 mb-5">
-          <Sparkles className="text-blue-700" />
-
-          <h2 className="text-2xl font-bold text-[#003366]">
+          <Sparkles className="text-blue-600" />
+          <h2 className="text-2xl font-bold">
             AI Tender Summary
           </h2>
         </div>
 
         {loadingSummary ? (
-          <div className="flex items-center gap-3 text-blue-700">
+          <div className="flex items-center gap-3">
             <Loader2 className="animate-spin" />
-            Generating AI summary...
+            Generating Summary...
           </div>
         ) : (
-          <p className="text-gray-700 leading-7 whitespace-pre-line">
-            {aiSummary}
-          </p>
+          <div className="bg-gray-50 rounded-xl p-5 whitespace-pre-wrap">
+            {aiSummary || "Upload a tender to generate summary."}
+          </div>
         )}
+
       </div>
 
-      {/* Chat Window */}
+      <div className="bg-white rounded-3xl shadow p-8">
 
-      <div className="bg-white rounded-3xl shadow-lg p-6">
-        <div className="flex items-center gap-3 mb-5">
-          <FileText className="text-green-700" />
+        <h2 className="text-2xl font-bold mb-5">
+          Ask Procurement Questions
+        </h2>
 
-          <h2 className="text-xl font-bold text-[#003366]">
-            Ask Procurement Questions
-          </h2>
-        </div>
+        <div className="border rounded-xl h-[400px] overflow-y-auto p-4 bg-gray-50 space-y-4">
 
-        <div className="h-[420px] overflow-y-auto border rounded-2xl bg-slate-50 p-5 space-y-5">
-          {chatHistory.length === 0 ? (
-            <div className="text-center text-gray-400 mt-24">
-              Start asking questions about this tender...
-            </div>
-          ) : (
-            chatHistory.map((msg, index) => (
+          {chatHistory.map((chat, index) => (
+            <div
+              key={index}
+              className={`flex ${
+                chat.role === "user"
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
+            >
               <div
-                key={index}
-                className={`flex ${
-                  msg.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
+                className={`rounded-xl px-4 py-3 max-w-[80%] whitespace-pre-wrap ${
+                  chat.role === "user"
+                    ? "bg-[#003366] text-white"
+                    : "bg-white border"
                 }`}
               >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 shadow ${
-                    msg.role === "user"
-                      ? "bg-[#003366] text-white"
-                      : "bg-white border text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    {msg.role === "user" ? (
-                      <User size={16} />
-                    ) : (
-                      <Bot size={16} className="text-green-600" />
-                    )}
-
-                    <span className="text-xs font-semibold uppercase">
-                      {msg.role}
-                    </span>
-                  </div>
-
-                  <p className="leading-6 whitespace-pre-line">
-                    {msg.text}
-                  </p>
-                </div>
+                {chat.message}
               </div>
-            ))
+            </div>
+          ))}
+
+          {loadingChat && (
+            <div className="flex items-center gap-2">
+              <Loader2 className="animate-spin" size={18} />
+              Gemini is thinking...
+            </div>
           )}
         </div>
 
-        {/* Input */}
-
         <div className="mt-5 flex gap-3">
+
           <input
+            className="flex-1 border rounded-xl px-4 py-3"
+            placeholder="Ask something about this tender..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Example: Which BIS clauses are missing in this tender?"
-            className="flex-1 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-600 outline-none"
-            onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+            onKeyDown={(e) =>
+              e.key === "Enter" && handleAsk()
+            }
           />
 
           <button
             onClick={handleAsk}
             disabled={loadingChat}
-            className="bg-[#003366] hover:bg-[#002244] text-white px-5 rounded-xl flex items-center gap-2 disabled:opacity-60"
+            className="bg-[#003366] text-white px-6 rounded-xl flex items-center gap-2"
           >
             {loadingChat ? (
               <Loader2 className="animate-spin" size={18} />
             ) : (
               <Send size={18} />
             )}
-
-            Send
+            Ask
           </button>
+
         </div>
       </div>
 
-      {/* Suggested Questions */}
-
-      <div className="bg-blue-50 rounded-3xl border border-blue-200 p-6">
-        <h3 className="font-bold text-blue-700 mb-4">
-          Suggested Questions
-        </h3>
-
-        <div className="flex flex-wrap gap-3">
-          {[
-            "Summarize this tender.",
-            "Which BIS clauses are missing?",
-            "Explain the compliance score.",
-            "Why is IS 10322 recommended?",
-            "List all mandatory BIS standards.",
-            "How can this tender become fully compliant?",
-          ].map((q, index) => (
-            <button
-              key={index}
-              onClick={() => setQuestion(q)}
-              className="bg-white px-4 py-2 rounded-full border hover:bg-blue-100 transition text-sm"
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      </div>
-    </motion.div>
+    </div>
   );
 }

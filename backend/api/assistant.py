@@ -12,36 +12,21 @@ router = APIRouter(
     tags=["Gemini AI Assistant"],
 )
 
-# ======================================================
-# Request Model
-# ======================================================
 
 class QuestionRequest(BaseModel):
     filename: str
     question: str
 
 
-# ======================================================
-# AI Tender Summary
-# ======================================================
-
 @router.get("/summary")
 def get_summary(filename: str):
-    """
-    Generate AI summary from OCR extracted tender text.
-    """
 
     txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
-
-    print("\n========== GEMINI SUMMARY ==========")
-    print("Filename :", filename)
-    print("OCR File :", txt_path)
-    print("Exists   :", txt_path.exists())
 
     if not txt_path.exists():
         raise HTTPException(
             status_code=404,
-            detail="OCR text not found. Please run OCR first."
+            detail="OCR text not found."
         )
 
     tender_text = txt_path.read_text(
@@ -53,32 +38,19 @@ def get_summary(filename: str):
 
     return {
         "status": "success",
-        "filename": filename,
         "summary": summary,
     }
 
 
-# ======================================================
-# Procurement AI Chat
-# ======================================================
-
 @router.post("/ask")
 def ask_question(request: QuestionRequest):
-    """
-    Ask procurement-related questions about uploaded tender.
-    """
 
     txt_path = UPLOAD_DIR / request.filename.replace(".pdf", ".txt")
-
-    print("\n========== GEMINI CHAT ==========")
-    print("Filename :", request.filename)
-    print("Question :", request.question)
-    print("OCR File :", txt_path)
 
     if not txt_path.exists():
         raise HTTPException(
             status_code=404,
-            detail="OCR text not found. Please run OCR first."
+            detail="OCR text not found."
         )
 
     tender_text = txt_path.read_text(
@@ -88,12 +60,10 @@ def ask_question(request: QuestionRequest):
 
     answer = ask_tender_question(
         tender_text,
-        request.question
+        request.question,
     )
 
     return {
         "status": "success",
-        "filename": request.filename,
-        "question": request.question,
         "answer": answer,
     }

@@ -1,16 +1,17 @@
 from fastapi import APIRouter, HTTPException
-from pathlib import Path
 import fitz
 import pytesseract
 from pdf2image import convert_from_path
 
-router = APIRouter(prefix="/ocr", tags=["OCR"])
+from app.config import UPLOAD_DIR
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-UPLOAD_DIR = BASE_DIR / "uploads"
+router = APIRouter(
+    prefix="/ocr",
+    tags=["OCR Engine"]
+)
 
 
-def extract_pdf_text(pdf_path):
+def extract_text_pymupdf(pdf_path):
     doc = fitz.open(pdf_path)
     text = ""
 
@@ -21,12 +22,12 @@ def extract_pdf_text(pdf_path):
     return text.strip()
 
 
-def extract_scan_text(pdf_path):
+def extract_text_tesseract(pdf_path):
     pages = convert_from_path(pdf_path)
     text = ""
 
-    for image in pages:
-        text += pytesseract.image_to_string(image)
+    for page in pages:
+        text += pytesseract.image_to_string(page, lang="eng") + "\n"
 
     return text.strip()
 
@@ -37,35 +38,41 @@ def extract_ocr(filename: str):
     pdf_path = UPLOAD_DIR / filename
 
     if not pdf_path.exists():
-        raise HTTPException(404, "Uploaded PDF not found.")
+        raise HTTPException(404, "Tender PDF not found.")
 
-    text = extract_pdf_text(pdf_path)
+    print(f"[OCR] Reading PDF -> {pdf_path}")
+
+    text = extract_text_pymupdf(pdf_path)
     method = "PyMuPDF"
 
     if len(text) < 50:
-        text = extract_scan_text(pdf_path)
+        text = extract_text_tesseract(pdf_path)
         method = "Tesseract OCR"
 
     txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
     txt_path.write_text(text, encoding="utf-8")
+
+    print(f"[OCR] Saved TXT -> {txt_path}")
 
     return {
         "status": "success",
         "filename": filename,
         "ocr_file": txt_path.name,
         "method": method,
-        "preview": text[:2000]
+        "characters_extracted": len(text),
+        "preview": text[:2000],
     }
 
 
 @router.get("/download/")
 def download_ocr(filename: str):
+
     txt_path = UPLOAD_DIR / filename.replace(".pdf", ".txt")
 
     if not txt_path.exists():
-        raise HTTPException(404, "OCR text not found.")
+        raise HTTPException(404, "OCR file not found.")
 
     return {
         "filename": txt_path.name,
-        "ocr_text": txt_path.read_text(encoding="utf-8")
+        "ocr_text": txt_path.read_text(encoding="utf-8"),
     }

@@ -1,25 +1,15 @@
 import axios from "axios";
 
-/* ==========================================================
-   AI Powered BIS Tender Compliance Engine (SIH 2026)
-   Production API Service
-========================================================== */
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://sih-bis-ai.onrender.com";
-
-/* ==========================================================
-   Axios Instance
-========================================================== */
-
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 180000, // 3 minutes
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "https://sih-bis-ai.onrender.com",
+  timeout: 180000,
 });
 
-/* ==========================================================
-   Global Error Handler
-========================================================== */
+// -------------------------------------------
+// Error Logger
+// -------------------------------------------
 
 api.interceptors.response.use(
   (response) => response,
@@ -29,147 +19,84 @@ api.interceptors.response.use(
     if (error.response) {
       console.error("Status:", error.response.status);
       console.error("Data:", error.response.data);
-    } else if (error.request) {
-      console.error("Backend server unreachable.");
     } else {
-      console.error(error.message);
+      console.error("Backend server unreachable.");
     }
 
     return Promise.reject(error);
   }
 );
 
-/* ==========================================================
-   Health Check
-========================================================== */
-
-export const checkBackendStatus = async () => {
-  const { data } = await api.get("/health");
-  return data;
-};
-
-/* ==========================================================
-   Upload Tender PDF
-========================================================== */
+// -------------------------------------------
+// Upload
+// -------------------------------------------
 
 export const uploadTender = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
+  const form = new FormData();
+  form.append("file", file);
 
-  const { data } = await api.post("/upload/", formData, {
+  const res = await api.post("/upload/", form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   OCR Extraction
-========================================================== */
-
+// OCR
 export const extractOCR = async (filename) => {
-  const { data } = await api.get("/ocr/", {
+  const res = await api.get("/ocr/", {
     params: { filename },
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   Download OCR Text
-========================================================== */
-
-export const downloadOCRText = async (filename) => {
-  const response = await api.get("/ocr/download/", {
-    params: { filename },
-    responseType: "blob",
-  });
-
-  return response.data;
-};
-
-/* ==========================================================
-   BIS Compliance Validation
-========================================================== */
-
+// Validation
 export const validateTender = async (filename) => {
-  const { data } = await api.get("/validate/", {
+  const res = await api.get("/validate/", {
     params: { filename },
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   AI Recommendation Engine
-========================================================== */
-
+// Recommendation
 export const getRecommendations = async (filename) => {
-  const { data } = await api.get("/recommend/", {
+  const res = await api.get("/recommend/", {
     params: { filename },
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   Gemini AI Summary
-========================================================== */
-
+// AI Summary
 export const getAISummary = async (filename) => {
-  const { data } = await api.get("/assistant/", {
+  const res = await api.get("/assistant/summary", {
     params: { filename },
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   Gemini Chat Assistant
-========================================================== */
-
+// AI Chat
 export const askAssistant = async (filename, question) => {
-  const { data } = await api.post("/assistant/", {
+  const res = await api.post("/assistant/ask", {
     filename,
     question,
   });
 
-  return data;
+  return res.data;
 };
 
-/* ==========================================================
-   Compliance Report Download
-========================================================== */
-
-export const downloadReport = async (filename) => {
-  const response = await api.get("/report/", {
+// Report
+export const generateReport = async (filename) => {
+  const res = await api.get("/report/generate", {
     params: { filename },
-    responseType: "blob",
   });
 
-  return response.data;
+  return res.data;
 };
-
-/* ==========================================================
-   Helper URLs
-========================================================== */
-
-// Uploaded PDF Preview URL
-export const getTenderPDF = (filename) =>
-  `${API_BASE_URL}/pdf/${encodeURIComponent(filename)}`;
-
-// Uploaded PDF (raw static file)
-export const getUploadedPDF = (filename) =>
-  `${API_BASE_URL}/uploads/${encodeURIComponent(filename)}`;
-
-// Compliance Report URL
-export const getReportURL = (filename) =>
-  `${API_BASE_URL}/report/?filename=${encodeURIComponent(filename)}`;
-
-// OCR Text URL
-export const getOCRTextURL = (filename) =>
-  `${API_BASE_URL}/ocr/download/?filename=${encodeURIComponent(filename)}`;
 
 export default api;

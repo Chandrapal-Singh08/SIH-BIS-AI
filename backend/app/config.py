@@ -7,10 +7,7 @@ import os
 # backend/app/config.py
 # ======================================================
 
-# backend/
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-
-# SIH-BIS-AI/
 PROJECT_ROOT = BACKEND_DIR.parent
 
 # Load backend/.env
@@ -26,7 +23,6 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 # ======================================================
 # Shared Directories
-# Every API imports these paths.
 # ======================================================
 
 UPLOAD_DIR = PROJECT_ROOT / "uploads"
@@ -48,3 +44,18 @@ ALLOWED_ORIGINS = [
 
 if FRONTEND_URL and FRONTEND_URL not in ALLOWED_ORIGINS:
     ALLOWED_ORIGINS.append(FRONTEND_URL)
+
+ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))
+
+# ======================================================
+# Startup Validation
+# ======================================================
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is missing.")
+
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY is missing.")
+
+print("Uploads :", UPLOAD_DIR)
+print("Reports :", REPORT_DIR)
