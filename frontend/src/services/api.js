@@ -1,19 +1,38 @@
 import axios from "axios";
 
+// ============================================
+// Backend URL
+// ============================================
+
 const API = axios.create({
-  baseURL: "https://sih-bis-ai.onrender.com",
-  timeout: 60000,
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "https://sih-bis-ai.onrender.com",
+  timeout: 120000,
 });
+
+// ============================================
+// Error Logging
+// ============================================
 
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("API Error:", error);
-    throw error;
+
+    if (error.response) {
+      console.error("Status:", error.response.status);
+      console.error("Data:", error.response.data);
+    }
+
+    return Promise.reject(error);
   }
 );
 
-// ---------------- Upload ----------------
+// ============================================
+// Upload Pipeline
+// ============================================
+
 export const uploadTender = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -27,7 +46,6 @@ export const uploadTender = async (file) => {
   return data;
 };
 
-// ---------------- OCR ----------------
 export const extractOCR = async (filename) => {
   const { data } = await API.get("/ocr/", {
     params: { filename },
@@ -36,15 +54,6 @@ export const extractOCR = async (filename) => {
   return data;
 };
 
-export const downloadOCRText = async (filename) => {
-  const { data } = await API.get("/ocr/download/", {
-    params: { filename },
-  });
-
-  return data;
-};
-
-// ---------------- Validator ----------------
 export const validateTender = async (filename) => {
   const { data } = await API.get("/validate/", {
     params: { filename },
@@ -53,7 +62,6 @@ export const validateTender = async (filename) => {
   return data;
 };
 
-// ---------------- Recommendation ----------------
 export const getRecommendations = async (filename) => {
   const { data } = await API.get("/recommend/", {
     params: { filename },
@@ -62,9 +70,22 @@ export const getRecommendations = async (filename) => {
   return data;
 };
 
-// ---------------- AI Assistant ----------------
+// ============================================
+// AI Assistant
+// ============================================
+
+// AI Summary
+export const getAISummary = async (filename) => {
+  const { data } = await API.get("/assistant/summary", {
+    params: { filename },
+  });
+
+  return data;
+};
+
+// Ask Gemini
 export const askAssistant = async (filename, question) => {
-  const { data } = await API.post("/assistant/", {
+  const { data } = await API.post("/assistant/chat", {
     filename,
     question,
   });
@@ -72,14 +93,36 @@ export const askAssistant = async (filename, question) => {
   return data;
 };
 
-// ---------------- PDF Preview ----------------
+// ============================================
+// PDF Review
+// ============================================
+
 export const getTenderPDF = (filename) => {
-  return `${API.defaults.baseURL}/pdf/${encodeURIComponent(filename)}`;
+  return `${
+    import.meta.env.VITE_API_URL || "https://sih-bis-ai.onrender.com"
+  }/pdf/${filename}`;
 };
 
-// ---------------- Report Download ----------------
-export const downloadReport = (filename) => {
-  return `${API.defaults.baseURL}/reports/${filename.replace(".pdf", "_report.pdf")}`;
+// ============================================
+// OCR Download
+// ============================================
+
+export const downloadOCRText = (filename) => {
+  return `${
+    import.meta.env.VITE_API_URL || "https://sih-bis-ai.onrender.com"
+  }/uploads/${filename.replace(".pdf", ".txt")}`;
+};
+
+// ============================================
+// Compliance Report
+// ============================================
+
+export const downloadReport = async (filename) => {
+  const { data } = await API.get("/report/", {
+    params: { filename },
+  });
+
+  return data;
 };
 
 export default API;
