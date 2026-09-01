@@ -7,11 +7,15 @@ from app.config import GEMINI_API_KEY
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
+MODEL_NAME = "gemini-2.5-flash"
+
+
+# ======================================================
+# Tender Summary
+# ======================================================
 
 def generate_tender_summary(tender_text: str):
-    """
-    Generate AI summary for uploaded tender.
-    """
+    """Generate AI summary of uploaded tender."""
 
     if not GEMINI_API_KEY:
         return "Gemini API key not configured."
@@ -37,44 +41,56 @@ Tender:
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=MODEL_NAME,
             contents=prompt,
         )
-
         return response.text
 
     except Exception as e:
         return f"Gemini Error: {str(e)}"
 
 
-def procurement_chat(question: str, tender_text: str):
+# ======================================================
+# Tender Question Answering
+# ======================================================
+
+def ask_tender_question(question: str, tender_text: str):
     """
-    AI chat over uploaded tender.
+    AI Assistant for answering questions about the uploaded tender.
     """
 
     if not GEMINI_API_KEY:
         return "Gemini API key not configured."
 
+    if not tender_text.strip():
+        return "Tender text is empty."
+
     prompt = f"""
-You are an AI BIS Procurement Assistant.
+You are an AI Compliance Assistant for the Bureau of Indian Standards (BIS).
 
-Tender Context:
+Context:
+The following text is extracted from an uploaded government tender.
+
+---------------- TENDER TEXT ----------------
 {tender_text}
+--------------------------------------------
 
-User Question:
+Answer ONLY using the tender content.
+
+If the information is missing, reply exactly:
+'This information is not present in the uploaded tender.'
+
+Question:
 {question}
 
-Answer using ONLY the tender context.
-If information is missing, clearly say:
-'This information is not present in the uploaded tender.'
+Give a concise and professional answer.
 """
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=MODEL_NAME,
             contents=prompt,
         )
-
         return response.text
 
     except Exception as e:
